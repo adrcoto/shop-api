@@ -3,17 +3,19 @@
 namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
+use App\ItemsImage;
 use App\Role;
-use App\Task;
+use App\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+
 /**
- * Class TaskController
+ * Class ItemController
  *
  * @package App\Http\Controllers\v1
  */
-class TaskController extends Controller
+class ItemController extends Controller
 {
     /**
      * Get tasks list
@@ -23,22 +25,16 @@ class TaskController extends Controller
     public function getAll()
     {
         try {
-            $user = $this->validateSession();
+            $items = Item::paginate(10);
 
-            if ($user->role_id === Role::ROLE_USER) {
-                $tasks = Task::where('assign', $user->id)->paginate(10);
-            } else {
-                $tasks = Task::paginate(10);
-            }
-
-            return $this->returnSuccess($tasks);
+            return $this->returnSuccess($items);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
     }
 
     /**
-     * Create a task
+     * Create an item
      *
      * @param Request $request
      *
@@ -50,9 +46,9 @@ class TaskController extends Controller
             $user = $this->validateSession();
 
             $rules = [
-                'name' => 'required',
-                'description' => 'required',
-                'assign' => 'required|exists:users,id'
+                'title' => 'required',
+                'description' => 'required'
+
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -61,15 +57,29 @@ class TaskController extends Controller
                 return $this->returnBadRequest('Please fill all required fields');
             }
 
-            $task = new Task();
+            $item = new Item();
 
-            $task->name = $request->name;
-            $task->description = $request->description;
-            $task->status = Task::STATUS_ASSIGNED;
-            $task->user_id = $user->id;
-            $task->assign = $request->assign;
+            $item->title = $request->title;
+            $item->description = $request->description;
+            $item->status = Item::STATUS_ACTIVE;
+            $item->user_id = $user->id;
 
-            $task->save();
+            $item->save();
+
+
+            foreach ($request->images as $image) {
+                $filename = $image->store('images', 'public');
+                ItemsImage::create([
+                    'item_id' => $item->id,
+                    'filename' => $filename
+                ]);
+            }
+
+//            $filename = $request->file('images')->store('images','public');
+//            ItemsImage::create([
+//                'item_id' => $item->id,
+//                'filename' => $filename
+//            ]);
 
             return $this->returnSuccess();
         } catch (\Exception $e) {
@@ -90,7 +100,7 @@ class TaskController extends Controller
         try {
             $user = $this->validateSession();
 
-            $task = Task::find($id);
+            $task = Item::find($id);
 
             if ($user->role_id === Role::ROLE_USER && $user->id !== $task->assign) {
                 return $this->returnError('You don\'t have permission to update this task');
@@ -136,11 +146,28 @@ class TaskController extends Controller
                 return $this->returnError('You don\'t have permission to delete this task');
             }
 
-            $task = Task::find($id);
+            $task = Item::find($id);
 
             $task->delete();
 
             return $this->returnSuccess();
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
+    }
+
+    /**
+     * Takes images for certain item
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function getImages($id){
+
+        try {
+        $images = ItemsImage::where('item_id',$id)->get();
+
+        return $this->returnSuccess($images);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }

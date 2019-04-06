@@ -5,11 +5,11 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Log
+ * Class Notification
  *
  * @package App
  */
-class Log extends Model
+class ItemsImage extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -17,11 +17,8 @@ class Log extends Model
      * @var array
      */
     protected $fillable = [
-        'task_id',
-        'user_id',
-        'type',
-        'old_value',
-        'new_value'
+        'item_id',
+        'filename'
     ];
 
     /**
@@ -33,21 +30,11 @@ class Log extends Model
     ];
 
     /**
-     * User that produced this log
+     * Get the user to be notified.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
-    {
-        return $this->belongsTo('App\User');
-    }
-
-    /**
-     * Item that own this log
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function task()
+    public function item()
     {
         return $this->belongsTo('App\Item');
     }

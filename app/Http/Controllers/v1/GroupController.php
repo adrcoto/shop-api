@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * Class TaskController
+ * Class ItemController
  *
  * @package App\Http\Controllers\v1
  */

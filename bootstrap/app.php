@@ -94,6 +94,15 @@ $app->register(GenTux\Jwt\Support\LumenServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->configure('mail');
 
+
+$app->singleton(
+    Illuminate\Contracts\Filesystem\Factory::class,
+    function ($app) {
+        return new Illuminate\Filesystem\FilesystemManager($app);
+    }
+);
+
+$app->configure('filesystems');
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

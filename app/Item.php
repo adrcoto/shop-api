@@ -5,23 +5,18 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Task
+ * Class Item
  *
  * @package App
  */
-class Task extends Model
+class Item extends Model
 {
     /** @var int */
-    const STATUS_ASSIGNED = 0;
+    const STATUS_ACTIVE = 1;
 
     /** @var int */
-    const STATUS_IN_PROGRESS = 1;
+    const STATUS_DEACTIVATED = 0;
 
-    /** @var int */
-    const STATUS_NOT_DONE = 2;
-
-    /** @var int */
-    const STATUS_DONE = 3;
 
     /**
      * The attributes that are mass assignable.
@@ -29,11 +24,10 @@ class Task extends Model
      * @var array
      */
     protected $fillable = [
-        'name',
+        'title',
         'description',
         'status',
-        'user_id',
-        'assign'
+        'user_id'
     ];
 
     /**
@@ -59,10 +53,10 @@ class Task extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function assign()
-    {
-        return $this->belongsTo('App\User', 'assign', 'id');
-    }
+//    public function assign()
+//    {
+//        return $this->belongsTo('App\User', 'assign', 'id');
+//    }
 
     /**
      * Get task comments

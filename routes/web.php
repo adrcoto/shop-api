@@ -31,6 +31,8 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
     $router->post('/verify', ['uses' => 'UserController@verify']);
     $router->post('/forgot-password', ['uses' => 'UserController@forgotPassword']);
     $router->post('/change-password', ['uses' => 'UserController@changePassword']);
+    $router->get('/items', ['uses' => 'ItemController@getAll']);
+    $router->get('/item/{id}', ['uses' => 'ItemController@getImages']);
 });
 
 /** Routes with auth */
@@ -40,6 +42,7 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
         $router->patch('/', ['uses' => 'UserController@update']);
     });
 
+    //admin
     $router->group(['prefix' => 'admin', 'middleware' => 'admin'], function () use ($router) {
         $router->get('/users', ['uses' => 'AdminController@getUsers']);
         $router->group(['prefix' => 'user'], function () use ($router) {
@@ -49,21 +52,11 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
         });
     });
 
-    $router->get('/tasks', ['uses' => 'TaskController@getAll']);
+    //items
     $router->group(['prefix' => 'user'], function () use ($router) {
-        $router->post('/', ['uses' => 'TaskController@create']);
-        $router->patch('/{id}', ['uses' => 'TaskController@update']);
-        $router->delete('/{id}', ['uses' => 'TaskController@delete']);
+        $router->post('/', ['uses' => 'ItemController@create']);
+        $router->patch('/{id}', ['uses' => 'ItemController@update']);
+        $router->delete('/{id}', ['uses' => 'ItemController@delete']);
     });
-
-    //groups rutes
-    $router->group(['prefix' => '/groups'], function () use ($router) {
-        $router->get('/', ['uses' => 'GroupController@getAll']);
-        $router->post('/', ['uses' => 'GroupController@create']);
-        $router->post('/{id}', ['uses' => 'GroupController@addParticipants']);
-        $router->patch('/{id}', ['uses' => 'GroupController@update']);
-        $router->delete('/{id}', ['uses' => 'GroupController@delete']);
-    });
-
 
 });
