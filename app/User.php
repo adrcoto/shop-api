@@ -89,15 +89,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasMany('App/Task', 'assign', 'id');
     }
 
-    /**
-     * User groups
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function groups()
-    {
-        return $this->belongsToMany(Group::class);
-    }
 
     /**
      * User notifications

@@ -47,8 +47,8 @@ class UserController extends Controller
                 return $this->returnNotFound('Invalid credentials');
             }
 
-            if ($user->status === User::STATUS_INACTIVE) {
-                return $this->returnError('User is not approved by admin');
+            if ($user->status !== '1') {
+                return $this->returnError('Account not verified');
             }
 
             $token = $jwtToken->createToken($user);
@@ -91,12 +91,55 @@ class UserController extends Controller
             $user->name = $request->name;
             $user->email = $request->email;
             $user->password = Hash::make($request->password);
-            $user->status = User::STATUS_INACTIVE;
+            $user->status = strtoupper(str_random(6));
             $user->role_id = Role::ROLE_USER;
 
             $user->save();
 
+            //TODO should sent an email to user with code
+            $emailService = new EmailService();
+            $emailService->sendVerifyAccount($user);
+
+
             return $this->returnSuccess();
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
+    }
+
+    /**
+     * Verifys account
+     * @param Request $request
+     * @param User $userModel
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verify(Request $request, User $userModel){
+        try {
+            $rules = [
+                'email' => 'required|email|exists:users',
+                'code' => 'required'
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if (!$validator->passes()) {
+                return $this->returnBadRequest('Please fill all required fields');
+            }
+
+            $user = $userModel::where('email', $request->email)->get()->first();
+
+            if (!$user)
+                return $this->returnNotFound('User not found');
+
+            if ($user->status != $request->code)
+                return $this->returnError('Invalid code');
+
+            $user->status = '1';
+
+            $user->save();
+
+            return $this->returnSuccess();
+
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
