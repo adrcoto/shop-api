@@ -33,6 +33,7 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
     $router->post('/change-password', ['uses' => 'UserController@changePassword']);
     $router->get('/items', ['uses' => 'ItemController@getAll']);
     $router->get('/item/{id}', ['uses' => 'ItemController@getImages']);
+    $router->get('/search', ['uses' => 'ItemController@search']);
 });
 
 /** Routes with auth */

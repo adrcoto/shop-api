@@ -26,8 +26,14 @@ class Item extends Model
     protected $fillable = [
         'title',
         'description',
+        'price',
+        'currency',
+        'image',
+        'category',
+        'sub_category',
+        'location',
         'status',
-        'user_id'
+        'owner'
     ];
 
     /**
@@ -48,15 +54,6 @@ class Item extends Model
         return $this->belongsTo('App\User');
     }
 
-    /**
-     * Get the user that owns the task.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-//    public function assign()
-//    {
-//        return $this->belongsTo('App\User', 'assign', 'id');
-//    }
 
     /**
      * Get task comments

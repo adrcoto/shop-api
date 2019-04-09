@@ -26,7 +26,22 @@ class ItemController extends Controller
     {
         try {
             $items = Item::paginate(10);
+            //$items = Item::where('category', 1)->where('sub_category', 1)->get();
 
+            return $this->returnSuccess($items);
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
+    }
+
+    /**
+     * Search for items
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function search(Request $request){
+        try {
+            $items = Item::where('title', 'LIKE', '%'.$request->q.'%')->get();
             return $this->returnSuccess($items);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
@@ -47,8 +62,12 @@ class ItemController extends Controller
 
             $rules = [
                 'title' => 'required',
-                'description' => 'required'
-
+                'description' => 'required',
+                'price' => 'required',
+                'currency' => 'required',
+                'category' => 'required',
+                'sub_category' => 'required',
+                'location' => 'required',
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -61,12 +80,17 @@ class ItemController extends Controller
 
             $item->title = $request->title;
             $item->description = $request->description;
+            $item->price = $request->price;
+            $item->category = $request->category;
+            $item->sub_category = $request->sub_category;
+            $item->location = $request->location;
             $item->status = Item::STATUS_ACTIVE;
-            $item->user_id = $user->id;
+            $item->owner = $user->id;
 
             $item->save();
 
 
+            if ($request->has('images'))
             foreach ($request->images as $image) {
                 $filename = $image->store('images', 'public');
                 ItemsImage::create([
