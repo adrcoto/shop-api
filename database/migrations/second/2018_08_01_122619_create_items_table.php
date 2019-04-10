@@ -23,14 +23,18 @@ class CreateItemsTable extends Migration
             $table->float('price');
             $table->tinyInteger('currency');
             $table->integer('category')->unsigned();
-            $table->foreign('category')->references('id')->on('categories');
             $table->integer('sub_category')->unsigned();
-            $table->foreign('sub_category')->references('id')->on('sub_categories');
             $table->string('location');
             $table->tinyInteger('status');
             $table->integer('owner');
             $table->timestamps();
         });
+
+        Schema::table('items', function ($table){
+            $table->foreign('category')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('sub_category')->references('id')->on('sub_categories')->onDelete('cascade');
+        });
+
     }
     /*
 'title',
