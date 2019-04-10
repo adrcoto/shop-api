@@ -47,6 +47,7 @@ class CreateItemsTable extends Migration
 'location',
 'status',
 'owner'
+    php artisan migrate --path=/database/migrations/second
     */
     /**
      * Reverse the migrations.

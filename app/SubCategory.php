@@ -11,6 +11,15 @@ use Illuminate\Database\Eloquent\Model;
  */
 class SubCategory extends Model
 {
+    const LAPTOP_PC_PERIFERICE = 1;
+    const TELEFOANE = 2;
+    const TV_AUDIO_FOTO_VIDEO = 3;
+    const AUTOTURISME = 4;
+    const MOTOCICLETE_ATV_SCUTERE = 5;
+    const PIESE_ACCESORII_CONSUMABILE = 6;
+    const GARSONIERE_DE_INCHIRIAT = 7;
+    const GARSONIERE_DE_CUMPARAT = 8;
+    const SPATII_COMERCIALE_BIROURI = 9;
 
     /**
      * The attributes that are mass assignable.

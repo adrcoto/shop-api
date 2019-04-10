@@ -14,13 +14,22 @@ class UsersSeeder extends Seeder
      */
     public function run()
     {
-        $user = new User();
-        $user->name = "Admin";
-        $user->email = "admin@tasks.com";
-        $user->password = Hash::make("admin");
-        $user->status = User::STATUS_ACTIVE;
-        $user->role_id = Role::ROLE_ADMIN;
+        $admin = new User();
+        $admin->name = "Admin";
+        $admin->email = "admin@tasks.com";
+        $admin->password = Hash::make("admin");
+        $admin->status = User::STATUS_ACTIVE;
+        $admin->role_id = Role::ROLE_ADMIN;
 
+        $user = new User();
+        $user->name = "Adrian Coto";
+        $user->email = "adrcoto@yahoo.com";
+        $user->password = Hash::make("orange123");
+        $user->status = User::STATUS_ACTIVE;
+        $user->role_id = Role::ROLE_USER;
+
+        $admin->save();
         $user->save();
+
     }
 }
