@@ -15,6 +15,11 @@ $router->get('/', function () use ($router) {
     return $router->app->version() . ' - ' . 'Current API version: ' . API_VERSION;
 });
 
+
+$router->get('/key', function() {
+    return str_random(32);
+});
+
 /** CORS */
 $router->options(
     '/{any:.*}', [

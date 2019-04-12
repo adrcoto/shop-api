@@ -36,6 +36,6 @@ class ItemsImage extends Model
      */
     public function item()
     {
-        return $this->belongsTo('App\Item');
+        return $this->belongsTo('App\Item', 'id_item', 'id');
     }
 }

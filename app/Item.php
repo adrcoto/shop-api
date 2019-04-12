@@ -17,7 +17,6 @@ class Item extends Model
     /** @var int */
     const STATUS_DEACTIVATED = 0;
 
-
     /**
      * The attributes that are mass assignable.
      *
@@ -56,13 +55,13 @@ class Item extends Model
 
 
     /**
-     * Get task comments
+     * Get item images
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function comments()
+    public function images()
     {
-        return $this->hasMany('App\Comment');
+        return $this->hasMany('App\ItemsImage');
     }
 
     /**

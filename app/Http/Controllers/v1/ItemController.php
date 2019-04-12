@@ -4,12 +4,14 @@ namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
 use App\ItemsImage;
+use App\NewItem;
 use App\Role;
 use App\Item;
 USE App\Car;
 use App\Category;
 use App\SubCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -42,9 +44,86 @@ class ItemController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         try {
-            $items = Item::where('title', 'LIKE', '%'.$request->q.'%')->get();
+            /*
+             * Problem solved - merging two collections
+             * Item + images
+             */
+            /*
+            $test = Item::where('title', 'LIKE', '%'.$request->q.'%')->get();
+
+            $images = ItemsImage::where('item_id', $test->id)->get();
+
+            $collection = collect($test);
+            $secondCollection = collect($images);
+            $merged = $collection->merge(['images' => $secondCollection]);
+          */
+
+            /*
+             * Next Problem
+             */
+            /*
+                $items = null;
+                $i = 0;
+                $itemImages = [];
+                $itemsToLoop = Item::where('title', 'LIKE', '%' . $request->q . '%')->get();
+                //Loop through all items
+                foreach ($itemsToLoop as $item) {
+
+                    $imagesToLoop = ItemsImage::where('item_id', $item->id)->get();
+
+                    foreach ($imagesToLoop as $image) {
+                        $i++;
+                    }
+
+                    array_push($itemImages, $i);
+                    $i = 0;  //reset index
+
+                    $items = collect($item);
+                    $itemWithImages = $items->merge(['images' => $itemImages]);
+
+                    $itemsf = collect($itemWithImages);
+
+                }
+    */
+
+            /**
+             * Problem Solved - wrapping problem
+             */
+
+            /*
+                $itemsWithImages = collect();
+                $itemsToLoop = Item::where('title', 'LIKE', '%' . $request->q . '%')->get();
+                $items = collect();
+
+               foreach ($itemsToLoop as $key => $item) {
+                   //item images
+                   $itemImages = ItemsImage::where('item_id', $item->id)->get();
+                   //need to make a collection that contains item + images
+                   //add current item to a collection
+                   $items->push($item);
+
+
+                   $itemWithImages = $items->merge(['images' => $itemImages]);
+                   $itemsWithImages->push($itemWithImages);
+
+                   $items->forget($key);
+               }
+          */
+
+
+            $result = Item::where('title', 'LIKE', '%' . $request->q . '%')->get();
+            $items = collect();
+
+            foreach ($result as $item) {
+                $itemImages = ItemsImage::where('item_id', $item->id)->get();
+
+                $buffer = collect($item);
+                $itemWithImages = $buffer->merge(['images' => $itemImages]);
+                $items->push($itemWithImages);
+            }
 
             return $this->returnSuccess($items);
         } catch (\Exception $e) {
@@ -73,7 +152,6 @@ class ItemController extends Controller
                 'sub_category' => 'required|exists:sub_categories,id',
                 'location' => 'required',
             ];
-
 
 
             $validator = Validator::make($request->all(), $rules);
@@ -105,10 +183,10 @@ class ItemController extends Controller
 
             $item->save();
 
-            switch ($category){
+            switch ($category) {
                 case Category::ELECTONICE_ELECTROCASNICE :
                     //check for sub_category
-                    switch ($sub_category){
+                    switch ($sub_category) {
                         case SubCategory::LAPTOP_PC_PERIFERICE :
                             //todo create item and save it
                             break;
@@ -122,7 +200,7 @@ class ItemController extends Controller
                     break;
                 case  Category::AUTO_MOTO_NAUTICA :
                     //check for sub_category
-                    switch ($sub_category){
+                    switch ($sub_category) {
                         case SubCategory::AUTOTURISME :
                             //todo create item and save it
                             $car = new Car();
@@ -174,7 +252,7 @@ class ItemController extends Controller
                     break;
                 case Category::IMOBILIARE :
                     //check for sub_category
-                    switch ($sub_category){
+                    switch ($sub_category) {
                         case SubCategory::GARSONIERE_DE_INCHIRIAT :
                             //todo create item and save it
                             break;
@@ -187,8 +265,6 @@ class ItemController extends Controller
                     }
                     break;
             }
-
-
 
 
 //            $filename = $request->file('images')->store('images','public');
@@ -278,14 +354,35 @@ class ItemController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function getImages($id){
+    public function getImages($id)
+    {
 
         try {
-        $images = ItemsImage::where('item_id',$id)->get();
+            $images = ItemsImage::where('item_id', $id)->get();
 
-        return $this->returnSuccess($images);
+            return $this->returnSuccess($images);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
     }
+
+    private function buildItem($oldItem, $images)
+    {
+        $newItem = null;
+
+        $newItem->title = "wot";
+        $newItem->description = $oldItem->description;
+        $newItem->price = $oldItem->price;
+        $newItem->currency = $oldItem->currency;
+        $newItem->category = $oldItem->category;
+        $newItem->sub_category = $oldItem->sub_category;
+        $newItem->location = $oldItem->location;
+        $newItem->status = $oldItem->status;
+        $newItem->owner = $oldItem->owner;
+        $newItem->images = $images;
+
+
+        return $newItem;
+    }
+
 }
