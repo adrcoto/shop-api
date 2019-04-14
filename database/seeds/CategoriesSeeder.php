@@ -13,8 +13,7 @@ class CategoriesSeeder extends Seeder
      */
     public function run()
     {
-        Category::create(['name' => 'Electronice - Electrocasnice']);
-        Category::create(['name' => 'Auto - Moto - Nautica']);
-        Category::create(['name' => 'Imobiliare']);
+        foreach (Category::CATEGORIES as $CATEGORY)
+            Category::create(['name' => $CATEGORY]);
     }
 }

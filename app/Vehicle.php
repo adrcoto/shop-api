@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Item
+ * Vehicle Item
  *
  * @property mixed mileage
  * @property mixed manufacturer_year
@@ -32,7 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed right_hand_drive
  * @package App
  */
-class Car extends Model
+class Vehicle extends Model
 {
     /** @var int */
     const REGISTERED = 1;
@@ -103,6 +103,12 @@ class Car extends Model
     public function subcategory()
     {
         return $this->belongsTo('App\SubCategory');
+    }
+
+
+    public function item()
+    {
+        return $this->belongsTo('App\Item');
     }
 
 

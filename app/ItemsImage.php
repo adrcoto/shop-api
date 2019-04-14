@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Notification
  *
+ * @property integer item_id
+ * @property string filename
  * @package App
  */
 class ItemsImage extends Model
@@ -38,4 +40,5 @@ class ItemsImage extends Model
     {
         return $this->belongsTo('App\Item', 'id_item', 'id');
     }
+
 }

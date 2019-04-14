@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Item
  *
+ * @property string title
+ * @property string description
+ * @property float price
+ * @property boolean currency
+ * @property integer category
+ * @property string location
+ * @property boolean status
+ * @property integer owner
  * @package App
  */
 class Item extends Model
@@ -27,9 +35,7 @@ class Item extends Model
         'description',
         'price',
         'currency',
-        'image',
         'category',
-        'sub_category',
         'location',
         'status',
         'owner'
@@ -64,6 +70,15 @@ class Item extends Model
         return $this->hasMany('App\ItemsImage');
     }
 
+    public function vehicles()
+    {
+        return $this->hasMany('App\Vehicle');
+    }
+
+    public function electronics()
+    {
+        return $this->hasMany('App\Electronic');
+    }
     /**
      * Get task logs
      *

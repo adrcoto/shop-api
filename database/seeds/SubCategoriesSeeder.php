@@ -4,8 +4,9 @@ use Illuminate\Database\Seeder;
 use App\SubCategory;
 
 /**
- * Class RolesSeeder
+ * Class SubCategoriesSeeder
  */
+
 class SubCategoriesSeeder extends Seeder
 {
     /**
@@ -13,18 +14,10 @@ class SubCategoriesSeeder extends Seeder
      */
     public function run()
     {
-
-        SubCategory::create(['category' => 1,'name' => 'Laptop - PC - Periferice']);
-        SubCategory::create(['category' => 1,'name' => 'Telefoane']);
-        SubCategory::create(['category' => 1,'name' => 'TV - Audio - Foto - Video']);
-
-
-        SubCategory::create(['category' => 2,'name' => 'Autoturisme']);
-        SubCategory::create(['category' => 2,'name' => 'Motociclete - ATV - Scutere']);
-        SubCategory::create(['category' => 2,'name' => 'Piese - Accesorii - Consumabile']);
-
-        SubCategory::create(['category' => 3,'name' => 'Garsoniere de inchiriat']);
-        SubCategory::create(['category' => 3,'name' => 'Garsoniere de cumparat']);
-        SubCategory::create(['category' => 3,'name' => 'Spatii comerciale - Birouri']);
+        foreach (SubCategory::SUB_CATEGORIES as $SUB_CATEGORY)
+            SubCategory::create([
+                'category' => $SUB_CATEGORY['category'],
+                'name' => $SUB_CATEGORY['name']
+            ]);
     }
 }

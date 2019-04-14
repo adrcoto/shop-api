@@ -11,10 +11,18 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Category extends Model
 {
-
     const ELECTONICE_ELECTROCASNICE = 1;
+
     const AUTO_MOTO_NAUTICA = 2;
-    const IMOBILIARE = 3;
+
+    const CATEGORIES = [
+        'Electronice - Electrocasnice',
+        'Auto - Moto - Nautica'
+    ];
+
+
+
+//    const IMOBILIARE = 3;
     /**
      * The attributes that are mass assignable.
      *

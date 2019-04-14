@@ -5,23 +5,23 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Log
+ * Electronic Item
  *
  * @package App
  */
-class Log extends Model
+class Electronic extends Model
 {
+
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'task_id',
-        'user_id',
-        'type',
-        'old_value',
-        'new_value'
+        'manufacturer',
+        'model',
+        'status',
     ];
 
     /**
@@ -33,22 +33,18 @@ class Log extends Model
     ];
 
     /**
-     * User that produced this log
+     * Get the user that created the task.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
-    {
-        return $this->belongsTo('App\User');
-    }
 
-    /**
-     * Item that own this log
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function task()
+    public function item()
     {
         return $this->belongsTo('App\Item');
     }
+
+
+
+
+
 }

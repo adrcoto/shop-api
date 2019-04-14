@@ -37,6 +37,9 @@ $app->withEloquent();
 | your own bindings here if you like or you can make another file.
 |
 */
+$app->singleton('filesystem', function ($app) {
+    return $app->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem');
+});
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,

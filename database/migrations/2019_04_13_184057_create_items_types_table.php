@@ -4,10 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-/**
- * Class CreateTasksTable
- */
-class CreateItemsTable extends Migration
+class CreateItemsTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -16,39 +13,20 @@ class CreateItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('items_types', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title', 100);
-            $table->text('description');
-            $table->float('price');
-            $table->tinyInteger('currency');
             $table->integer('category')->unsigned();
             $table->integer('sub_category')->unsigned();
-            $table->string('location');
-            $table->tinyInteger('status');
-            $table->integer('owner');
+            $table->string('name');
             $table->timestamps();
         });
 
-        Schema::table('items', function ($table){
+        Schema::table('items_types', function ($table){
             $table->foreign('category')->references('id')->on('categories')->onDelete('cascade');
             $table->foreign('sub_category')->references('id')->on('sub_categories')->onDelete('cascade');
         });
-
     }
-    /*
-'title',
-'description',
-'price',
-'currency',
-'image',
-'category',
-'sub_category',
-'location',
-'status',
-'owner'
-    php artisan migrate --path=/database/migrations/second
-    */
+
     /**
      * Reverse the migrations.
      *
@@ -56,6 +34,6 @@ class CreateItemsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('items_types');
     }
 }

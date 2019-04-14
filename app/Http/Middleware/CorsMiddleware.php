@@ -27,7 +27,7 @@ class CorsMiddleware
 
         $headers = [
             'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, DELETE, PATCH',
-            'Access-Control-Allow-Headers' => 'Content-Type, X-Auth-Token, Origin, Authorization',
+            'Access-Control-Allow-Headers' => 'Content-ItemsType, X-Auth-Token, Origin, Authorization',
         ];
 
         if ($request->getMethod() == "OPTIONS") {

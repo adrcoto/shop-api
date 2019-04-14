@@ -12,6 +12,7 @@ use App\Category;
 use App\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -48,72 +49,8 @@ class ItemController extends Controller
     {
         try {
             /*
-             * Problem solved - merging two collections
-             * Item + images
+             * Sends items with images
              */
-            /*
-            $test = Item::where('title', 'LIKE', '%'.$request->q.'%')->get();
-
-            $images = ItemsImage::where('item_id', $test->id)->get();
-
-            $collection = collect($test);
-            $secondCollection = collect($images);
-            $merged = $collection->merge(['images' => $secondCollection]);
-          */
-
-            /*
-             * Next Problem
-             */
-            /*
-                $items = null;
-                $i = 0;
-                $itemImages = [];
-                $itemsToLoop = Item::where('title', 'LIKE', '%' . $request->q . '%')->get();
-                //Loop through all items
-                foreach ($itemsToLoop as $item) {
-
-                    $imagesToLoop = ItemsImage::where('item_id', $item->id)->get();
-
-                    foreach ($imagesToLoop as $image) {
-                        $i++;
-                    }
-
-                    array_push($itemImages, $i);
-                    $i = 0;  //reset index
-
-                    $items = collect($item);
-                    $itemWithImages = $items->merge(['images' => $itemImages]);
-
-                    $itemsf = collect($itemWithImages);
-
-                }
-    */
-
-            /**
-             * Problem Solved - wrapping problem
-             */
-
-            /*
-                $itemsWithImages = collect();
-                $itemsToLoop = Item::where('title', 'LIKE', '%' . $request->q . '%')->get();
-                $items = collect();
-
-               foreach ($itemsToLoop as $key => $item) {
-                   //item images
-                   $itemImages = ItemsImage::where('item_id', $item->id)->get();
-                   //need to make a collection that contains item + images
-                   //add current item to a collection
-                   $items->push($item);
-
-
-                   $itemWithImages = $items->merge(['images' => $itemImages]);
-                   $itemsWithImages->push($itemWithImages);
-
-                   $items->forget($key);
-               }
-          */
-
-
             $result = Item::where('title', 'LIKE', '%' . $request->q . '%')->get();
             $items = collect();
 
@@ -366,23 +303,18 @@ class ItemController extends Controller
         }
     }
 
-    private function buildItem($oldItem, $images)
+    public function test(Request $request)
     {
-        $newItem = null;
-
-        $newItem->title = "wot";
-        $newItem->description = $oldItem->description;
-        $newItem->price = $oldItem->price;
-        $newItem->currency = $oldItem->currency;
-        $newItem->category = $oldItem->category;
-        $newItem->sub_category = $oldItem->sub_category;
-        $newItem->location = $oldItem->location;
-        $newItem->status = $oldItem->status;
-        $newItem->owner = $oldItem->owner;
-        $newItem->images = $images;
+        try {
+            $image = 'cayenne1.jpg';
+            $cayenne = 'cayenne2.jpg';
+            $turbo = 'storage/app/hard-images/cayenne3.jpg';
+            $url = Storage::url($turbo);
 
 
-        return $newItem;
+           return $this->returnSuccess($url);
+       } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
     }
-
 }
