@@ -12,6 +12,11 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 /**
  * Class User
  *
+ * @property string name
+ * @property string email
+ * @property string password
+ * @property integer status
+ * @property integer role_id
  * @package App
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract, JwtPayloadInterface
@@ -38,7 +43,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
 
     /**
-     * The attributes excluded from the model's JSON form.
+     * The attributes excluded from the model'sss JSON form.
      *
      * @var array
      */
@@ -47,7 +52,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
 
     protected $visible = [
-    	'id',
+        'id',
         'name',
         'email',
         'role_id'

@@ -7,6 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Electronic Item
  *
+ * @property integer id
+ * @property integer item_id
+ * @property integer sub_category
+ * @property integer item_type
+ *
+ * @property string manufacturer
+ * @property string model
+ * @property string manufacturer_year
+ * @property boolean used
  * @package App
  */
 class Electronic extends Model
@@ -21,7 +30,8 @@ class Electronic extends Model
     protected $fillable = [
         'manufacturer',
         'model',
-        'status',
+        'manufacturer_year',
+        'used'
     ];
 
     /**

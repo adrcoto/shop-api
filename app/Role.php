@@ -27,7 +27,7 @@ class Role extends Model
     ];
 
     /**
-     * The attributes excluded from the model's JSON form.
+     * The attributes excluded from the model'sss JSON form.
      *
      * @var array
      */

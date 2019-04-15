@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\v1;
 
+use App\Electronic;
 use App\Http\Controllers\Controller;
+use App\User;
 use App\ItemsImage;
 use App\NewItem;
 use App\Role;
@@ -10,11 +12,11 @@ use App\Item;
 USE App\Car;
 use App\Category;
 use App\SubCategory;
+use App\Vehicle;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
+use Illuminate\Support\Facades\Validator;
+use Faker;
 
 /**
  * Class ItemController
@@ -51,9 +53,15 @@ class ItemController extends Controller
             /*
              * Sends items with images
              */
-            $result = Item::where('title', 'LIKE', '%' . $request->q . '%')->get();
-            $items = collect();
 
+            if ($request->has('q'))
+                $result = Item::where('title', 'LIKE', '%' . $request->q . '%')->get();
+            else
+                $result = Item::all();
+
+
+
+            $items = collect();
             foreach ($result as $item) {
                 $itemImages = ItemsImage::where('item_id', $item->id)->get();
 
@@ -61,6 +69,8 @@ class ItemController extends Controller
                 $itemWithImages = $buffer->merge(['images' => $itemImages]);
                 $items->push($itemWithImages);
             }
+
+
 
             return $this->returnSuccess($items);
         } catch (\Exception $e) {
@@ -306,14 +316,10 @@ class ItemController extends Controller
     public function test(Request $request)
     {
         try {
-            $image = 'cayenne1.jpg';
-            $cayenne = 'cayenne2.jpg';
-            $turbo = 'storage/app/hard-images/cayenne3.jpg';
-            $url = Storage::url($turbo);
+            $vehicles = Vehicle::all();
 
-
-           return $this->returnSuccess($url);
-       } catch (\Exception $e) {
+            return $this->returnSuccess($vehicles);
+        } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
     }

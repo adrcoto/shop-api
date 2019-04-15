@@ -6,30 +6,33 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Vehicle Item
+ * @property integer id
+ * @property integer item_id
+ * @property integer sub_category
+ * @property integer item_type
+
+ * @property String manufacturer
+ * @property String model
+ * @property integer manufacturer_year
+ * @property integer engine
+ * @property integer power
+ * @property string gearbox
+ * @property string body
+ * @property string fuel_type
+ * @property integer mileage
  *
- * @property mixed mileage
- * @property mixed manufacturer_year
- * @property mixed manufacturer
- * @property mixed item
- * @property int category
- * @property int sub_category
- * @property mixed model
- * @property mixed body
- * @property mixed fuel_type
- * @property mixed status
- * @property mixed engine
- * @property mixed origin
- * @property mixed power
- * @property mixed gearbox
- * @property mixed drive
- * @property mixed emission_class
- * @property mixed color
- * @property mixed VIN
- * @property mixed pollution_tax
- * @property mixed damaged
- * @property mixed registered
- * @property mixed first_owner
- * @property mixed right_hand_drive
+ * @property string drive
+ * @property string emission_class
+ * @property string color
+ * @property string origin
+ * @property string VIN
+ *
+ * @property boolean used
+ * @property boolean pollution_tax
+ * @property boolean damaged
+ * @property boolean registered
+ * @property boolean first_owner
+ * @property boolean right_hand_drive
  * @package App
  */
 class Vehicle extends Model

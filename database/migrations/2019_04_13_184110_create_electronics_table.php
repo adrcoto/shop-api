@@ -21,12 +21,13 @@ class CreateElectronicsTable extends Migration
 
             $table->string('manufacturer');
             $table->string('model');
+            $table->string('manufacturer_year');
             $table->boolean('used');
             $table->timestamps();
         });
 
         Schema::table('electronics', function ($table){
-            $table->foreign('item_id')->references('id')->on('items');
+            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
             $table->foreign('sub_category')->references('id')->on('sub_categories');
             $table->foreign('item_type')->references('id')->on('items_types');
         });

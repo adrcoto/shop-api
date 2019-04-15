@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Item
- *
+ * @property integer id
  * @property string title
  * @property string description
  * @property float price

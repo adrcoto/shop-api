@@ -21,19 +21,19 @@ class CreateVehiclesTable extends Migration
 
             $table->string('manufacturer');
             $table->string('model');
-            $table->string('body');
-            $table->string('fuel_type');
-            $table->string('manufacturer_year', 4);
-            $table->string('mileage');
-            $table->boolean('used');
+            $table->integer('manufacturer_year');
             $table->integer('engine')->unsigned();
-            $table->string('origin');
             $table->integer('power')->unsigned();
             $table->string('gearbox');
+            $table->string('body');
+            $table->string('fuel_type');
+            $table->integer('mileage');
             $table->string('drive');
             $table->string('emission_class');
             $table->string('color', 15);
+            $table->string('origin');
             $table->string('VIN', 17);
+            $table->boolean('used');
             $table->boolean('pollution_tax');
             $table->boolean('damaged');
             $table->boolean('registered');
@@ -42,8 +42,8 @@ class CreateVehiclesTable extends Migration
             $table->timestamps();
         });
 
-        Schema::table('vehicles', function ($table){
-            $table->foreign('item_id')->references('id')->on('items');
+        Schema::table('vehicles', function ($table) {
+            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
             $table->foreign('sub_category')->references('id')->on('sub_categories');
             $table->foreign('item_type')->references('id')->on('items_types');
         });

@@ -1,21 +1,24 @@
-CAR
+Vehicles
 
+Car
 
 Manufacturer: Porsche
 Model: Cayenne Turbo
-Body: Coupe
-Fuel Type: Petrol
 Manufacturer Year: 2015
-Mileage: 100 KM
-Status: Used
 Engine: 3.000 CM/3
-Origin: Germany
 Power: 350 HP
 Gearbox: Automatic
+Body: Coupe
+Fuel Type: Petrol
+Mileage: 100 KM
+
 Drive: 4WD
 Emission Class: Euro VI
 Color: Red
-VIN: 1273385923
+Origin: Germany
+VIN: HJ985KL1273385923
+
+Used: Yes
 Pollution Tax: Paid
 Damaged: No
 Registered: Yes
@@ -23,27 +26,35 @@ First Owner: Yes
 Right Hand Drive: No
 
 
-$table->integer('id')->unsigned();
-$table->integer('category')->unsigned();
-$table->integer('sub_category')->unsigned();
 
-$table->string('manufacturer', 25);
-$table->string('model', 50);
-$table->string('body', 25);
-$table->string('fuel_type', 25);
-$table->string('manufacturer_year', 4);
-$table->string('mileage', 20);
-$table->unsignedTinyInteger('status');
-$table->string('engine', 25);
-$table->string('origin', 25);
-$table->string('power', 25);
-$table->string('gearbox', 25);
-$table->string('drive', 15);
-$table->string('emission_class', 25);
+
+
+
+$table->integer('item_id')->unsigned()->unique();
+$table->integer('sub_category')->unsigned();
+$table->integer('item_type')->unsigned();
+
+$table->string('manufacturer');
+$table->string('model');
+$table->integer('manufacturer_year');
+$table->integer('engine')->unsigned();
+$table->integer('power')->unsigned();
+$table->string('gearbox');
+$table->string('body');
+$table->string('fuel_type');
+$table->integer('mileage');
+
+$table->string('drive');
+$table->string('emission_class');
 $table->string('color', 15);
+$table->string('origin');
 $table->string('VIN', 17);
-$table->unsignedTinyInteger('pollution_tax');
-$table->unsignedTinyInteger('damaged');
-$table->unsignedTinyInteger('registered');
-$table->unsignedTinyInteger('first_owner');
-$table->unsignedTinyInteger('right_hand_drive');
+
+$table->boolean('used');
+$table->boolean('pollution_tax');
+$table->boolean('damaged');
+$table->boolean('registered');
+$table->boolean('first_owner');
+$table->boolean('right_hand_drive');
+
+

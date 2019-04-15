@@ -2,11 +2,13 @@
 
 use App\Role;
 use App\User;
+use Faker as fk;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class UsersSeeder extends Seeder
 {
+
     /**
      * Run the database seeds.
      *
@@ -21,15 +23,33 @@ class UsersSeeder extends Seeder
         $admin->status = User::STATUS_ACTIVE;
         $admin->role_id = Role::ROLE_ADMIN;
 
+        $admin->save();
+
+        $faker = fk\Factory::create();
+
+        $PASSWORD = 'sms';
+
+        $this->addUser("Adrian Coto", "adrcoto@yahoo.com", $PASSWORD);
+        $this->addUser("Gidu Liviu", "liviu18@gmail.com", $PASSWORD);
+        $this->addUser("Tuta mihai", "tuta_mihai14@yahoo.com", $PASSWORD);
+        $this->addUser("Brabete Florin", "florin18@yahoo.com", $PASSWORD);
+        $this->addUser("Lica Andrei", "lica_valentin@yahoo.com", $PASSWORD);
+        $this->addUser("Dinca Mihai", "Mihai_Parkour@yahoo.com", $PASSWORD);
+
+        for ($i = 0; $i <= 25; $i++)
+            $this->addUser($faker->name, $faker->email, $PASSWORD);
+
+    }
+
+    public function addUser($name, $email, $password){
         $user = new User();
-        $user->name = "Adrian Coto";
-        $user->email = "adrcoto@yahoo.com";
-        $user->password = Hash::make("orange123");
+
+        $user->name = $name;
+        $user->email = $email;
+        $user->password = Hash::make($password);
         $user->status = User::STATUS_ACTIVE;
         $user->role_id = Role::ROLE_USER;
 
-        $admin->save();
         $user->save();
-
     }
 }

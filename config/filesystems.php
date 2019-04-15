@@ -53,5 +53,17 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
         ],
+
+        'items-images' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/items-images'),
+            'visibility' => 'public'
+        ],
+
+        'hard-images' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/hard-images'),
+            'visibility' => 'public'
+        ]
     ],
 ];
