@@ -15,6 +15,7 @@ use App\SubCategory;
 use App\Vehicle;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Faker;
 
@@ -60,7 +61,6 @@ class ItemController extends Controller
                 $result = Item::all();
 
 
-
             $items = collect();
             foreach ($result as $item) {
                 $itemImages = ItemsImage::where('item_id', $item->id)->get();
@@ -69,7 +69,6 @@ class ItemController extends Controller
                 $itemWithImages = $buffer->merge(['images' => $itemImages]);
                 $items->push($itemWithImages);
             }
-
 
 
             return $this->returnSuccess($items);
@@ -316,9 +315,26 @@ class ItemController extends Controller
     public function test(Request $request)
     {
         try {
-            $vehicles = Vehicle::all();
+            $electronics = DB::table('items')
+                ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
+                ->orderBy('items.updated_at', 'desc')
+                ->get();
+            foreach ($electronics as $electronic)
+                $electronic->images = DB::table('items_images')->where('item_id', '=', $electronic->item_id)->get();
 
-            return $this->returnSuccess($vehicles);
+            $vehicles = DB::table('items')
+                ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
+                ->orderBy('items.updated_at', 'desc')
+                ->get();
+
+            foreach ($vehicles as $vehicle)
+                $vehicle->images = DB::table('items_images')->where('item_id', '=', $vehicle->item_id)->get();
+
+            $items = $electronics->merge($vehicles)->sortByDesc('updated_at');
+
+            $wot = $electronics->concat($vehicles);
+
+            return $this->returnSuccess($wot);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }

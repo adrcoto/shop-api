@@ -24,7 +24,7 @@ class ItemsSeeder extends Seeder
 
 
         $this->addVehicleItem('Porsche Cayenne 2012', "Tot ce-i trebuie, full option",
-            750000, true, Category::AUTO_MOTO_NAUTICA, "Craiova",
+            75000, true, Category::AUTO_MOTO_NAUTICA, "Craiova",
             SubCategory::AUTOTURISME,
             ItemsType::AUTOTURISM,
             "Porsche", "Cayenne", 2012,
@@ -34,6 +34,7 @@ class ItemsSeeder extends Seeder
             "HGJLO34810LKJF195", true, true, false,
             true, false);
 
+        sleep(10);
     //telefon
         $this->addElectronicItem('Samsung Galaxy S10', "E furat din UK",
             3600, false, Category::ELECTONICE_ELECTROCASNICE, "Bals",
@@ -42,6 +43,7 @@ class ItemsSeeder extends Seeder
             "Samsung", "Galaxy S10", 2018,
             false);
 
+        sleep(5);
         //telefon
         $this->addElectronicItem('Samsung Galaxy S9+', "E furat din UK",
             2500, false, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti",
@@ -51,6 +53,7 @@ class ItemsSeeder extends Seeder
             true);
 
 
+        sleep(7);
         //congelator
         $this->addElectronicItem('Congelator 5 sertare artic',
             "Vând congelator 5 sertare arctic stare foarte bună de funcționare curat și complet",
@@ -60,6 +63,7 @@ class ItemsSeeder extends Seeder
             "Artic", "", 0,
             false);
 
+        sleep(9);
 
         $this->addElectronicItem('Nikon D7100 + 2 obiective',
             "Nikon folosit in regim hobby.
@@ -78,6 +82,7 @@ Trimit si in tara cu verificare colet.",
             "Nikon", "", 2017,
             true);
 
+        sleep(10);
         //dezmembrare wot is this
         $this->addElectronicItem('Dezmembrez Zte Grand X In',
             "Dezmembrez Zte Grand X In
@@ -97,7 +102,7 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
             ItemsType::ACCESORII_GSM,
             "", "", 0,
             true);
-
+        sleep(5);
 //husa
         $this->addElectronicItem('Set husa slim transparenta TPU + folie sticla Hoco iPhone X',
             'COD PRODUS: IPHONE X - HOCO SET HUSA + FOLIE
@@ -108,6 +113,19 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
             "", "", 0,
             false);
 
+        sleep(5);
+        $this->addVehicleItem('Dacia 130', "Merge ca atunci cand am luat-o",
+            1500, false, Category::AUTO_MOTO_NAUTICA, "Craiova",
+            SubCategory::AUTOTURISME,
+            ItemsType::AUTOTURISM,
+            "Dacia", "1310", 1995,
+            1.2, 65, "Manuala",
+            "Berlina", "Benzina", 350000,
+            "Fata", "Euro", "Galben", "Romania",
+            "HGJLO348HHHKJF195", true, false, true,
+            false, false);
+
+        sleep(10);
 
         //rama allview
         $this->addElectronicItem('Rama mijloc allview x4 soul mini',

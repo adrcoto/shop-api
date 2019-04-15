@@ -43,7 +43,7 @@ class CreateVehiclesTable extends Migration
         });
 
         Schema::table('vehicles', function ($table) {
-            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
+            $table->foreign('item_id')->references('item_id')->on('items')->onDelete('cascade');
             $table->foreign('sub_category')->references('id')->on('sub_categories');
             $table->foreign('item_type')->references('id')->on('items_types');
         });
