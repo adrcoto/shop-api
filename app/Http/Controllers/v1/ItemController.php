@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers\v1;
 
-use App\Electronic;
-use App\Http\Controllers\Controller;
-use App\User;
-use App\ItemsImage;
-use App\NewItem;
-use App\Role;
+
 use App\Item;
-USE App\Car;
+use App\Role;
+use App\User;
+use App\Electronic;
+use App\Vehicle;
+use App\ItemsImage;
 use App\Category;
 use App\SubCategory;
-use App\Vehicle;
-use Illuminate\Http\Request;
 
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Faker;
+use Illuminate\Support\Collection;
+
 
 /**
  * Class ItemController
@@ -121,7 +122,6 @@ class ItemController extends Controller
             $item->description = $request->description;
             $item->price = $request->price;
             $item->currency = $request->currency;
-            $item->category = $category;
             $item->sub_category = $sub_category;
             $item->location = $request->location;
             $item->status = Item::STATUS_ACTIVE;
@@ -146,78 +146,53 @@ class ItemController extends Controller
                     break;
                 case  Category::AUTO_MOTO_NAUTICA :
                     //check for sub_category
-                    switch ($sub_category) {
-                        case SubCategory::AUTOTURISME :
-                            //todo create item and save it
-                            $car = new Car();
-                            //building the car object
 
-                            $car->item = $item->id;
-                            $car->category = Category::AUTO_MOTO_NAUTICA;
-                            $car->sub_category = SubCategory::AUTOTURISME;
+                    //todo create item and save it
+                    $vehicles = new Vehicle();
+                    //building the vehicles object
 
-                            $car->manufacturer = $request->manufacturer;
-                            $car->model = $request->model;
-                            $car->body = $request->body;
-                            $car->fuel_type = $request->fuel_type;
-                            $car->manufacturer_year = $request->manufacturer_year;
-                            $car->mileage = $request->mileage;
-                            $car->status = $request->status;
-                            $car->engine = $request->engine;
-                            $car->origin = $request->origin;
-                            $car->power = $request->power;
-                            $car->gearbox = $request->gearbox;
-                            $car->drive = $request->drive;
-                            $car->emission_class = $request->emission_class;
-                            $car->color = $request->color;
-                            $car->VIN = $request->VIN;
-                            $car->pollution_tax = $request->pollution_tax;
-                            $car->damaged = $request->damaged;
-                            $car->registered = $request->registered;
-                            $car->first_owner = $request->first_owner;
-                            $car->right_hand_drive = $request->right_hand_drive;
+                    $vehicles->item_id = $item->id;
+                    $vehicles->sub_category = SubCategory::AUTOTURISME;
 
-                            $car->save();
+                    $vehicles->manufacturer = $request->manufacturer;
+                    $vehicles->model = $request->model;
+                    $vehicles->body = $request->body;
+                    $vehicles->fuel_type = $request->fuel_type;
+                    $vehicles->manufacturer_year = $request->manufacturer_year;
+                    $vehicles->mileage = $request->mileage;
+                    $vehicles->used  = $request->status;
+                    $vehicles->engine = $request->engine;
+                    $vehicles->origin = $request->origin;
+                    $vehicles->power = $request->power;
+                    $vehicles->gearbox = $request->gearbox;
+                    $vehicles->drive = $request->drive;
+                    $vehicles->emission_class = $request->emission_class;
+                    $vehicles->color = $request->color;
+                    $vehicles->VIN = $request->VIN;
+                    $vehicles->pollution_tax = $request->pollution_tax;
+                    $vehicles->damaged = $request->damaged;
+                    $vehicles->registered = $request->registered;
+                    $vehicles->first_owner = $request->first_owner;
+                    $vehicles->right_hand_drive = $request->right_hand_drive;
 
-                            if ($request->has('images'))
-                                foreach ($request->images as $image) {
-                                    $filename = $image->store('images', 'public');
-                                    ItemsImage::create([
-                                        'item_id' => $item->id,
-                                        'filename' => $filename
-                                    ]);
-                                }
-                            break;
-                        case SubCategory::MOTOCICLETE_ATV_SCUTERE :
-                            //todo create item and save it
-                            break;
-                        case SubCategory::PIESE_ACCESORII_CONSUMABILE :
-                            //todo create item and save it
-                            break;
-                    }
+                    $vehicles->save();
+
+                    if ($request->has('images'))
+                        foreach ($request->images as $image) {
+                            $filename = $image->store('images', 'public');
+                            ItemsImage::create([
+                                'item_id' => $item->id,
+                                'filename' => $filename
+                            ]);
+                        }
                     break;
-                case Category::IMOBILIARE :
-                    //check for sub_category
-                    switch ($sub_category) {
-                        case SubCategory::GARSONIERE_DE_INCHIRIAT :
-                            //todo create item and save it
-                            break;
-                        case SubCategory::GARSONIERE_DE_CUMPARAT :
-                            //todo create item and save it
-                            break;
-                        case SubCategory::SPATII_COMERCIALE_BIROURI :
-                            //todo create item and save it
-                            break;
-                    }
+                case SubCategory::MOTOCICLETE_ATV_SCUTERE :
+                    //todo create item and save it
+                    break;
+                case SubCategory::PIESE_ACCESORII_CONSUMABILE :
+                    //todo create item and save it
                     break;
             }
-
-
-//            $filename = $request->file('images')->store('images','public');
-//            ItemsImage::create([
-//                'item_id' => $item->id,
-//                'filename' => $filename
-//            ]);
 
             return $this->returnSuccess();
         } catch (\Exception $e) {
@@ -315,26 +290,29 @@ class ItemController extends Controller
     public function test(Request $request)
     {
         try {
-            $electronics = DB::table('items')
-                ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
-                ->orderBy('items.updated_at', 'desc')
-                ->get();
-            foreach ($electronics as $electronic)
-                $electronic->images = DB::table('items_images')->where('item_id', '=', $electronic->item_id)->get();
+            $items = DB::select('select * from items as i, vehicles as v, electronics as e where i.item_id = v.item_id or i.item_id = e.item_id group by i.updated_at desc');
 
-            $vehicles = DB::table('items')
+            foreach ($items as $item)
+                $item->images = DB::table('items_images')->where('item_id', '=', $item->item_id)->get();
+
+
+
+            $wwww = DB::table('items')
                 ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
-                ->orderBy('items.updated_at', 'desc')
+                ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
                 ->get();
+//
+//            foreach ($items as $vehicle)
+//                $vehicle->images = DB::table('items_images')->where('item_id', '=', $vehicle->item_id)->get();
 
-            foreach ($vehicles as $vehicle)
-                $vehicle->images = DB::table('items_images')->where('item_id', '=', $vehicle->item_id)->get();
 
-            $items = $electronics->merge($vehicles)->sortByDesc('updated_at');
 
-            $wot = $electronics->concat($vehicles);
 
-            return $this->returnSuccess($wot);
+
+
+
+            return $this->returnSuccess($items);
+
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }

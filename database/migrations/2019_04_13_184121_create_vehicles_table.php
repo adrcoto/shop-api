@@ -39,7 +39,6 @@ class CreateVehiclesTable extends Migration
             $table->boolean('registered');
             $table->boolean('first_owner');
             $table->boolean('right_hand_drive');
-            $table->timestamps();
         });
 
         Schema::table('vehicles', function ($table) {

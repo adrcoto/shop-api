@@ -90,6 +90,8 @@ class Vehicle extends Model
         'right_hand_drive'
     ];
 
+    public $timestamps = false;
+
     /**
      * The attributes that should be hidden for arrays.
      *

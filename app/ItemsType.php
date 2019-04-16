@@ -84,7 +84,6 @@ class ItemsType extends Model
     const GADGETURI = 11;
 
 
-
     const TELEVIZOARE_ACCESORII = 12;
     const BOXE_SISTEME_AUDIO = 13;
     const PLAYERE_AUDIO_VIDEO = 14;

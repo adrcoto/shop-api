@@ -6,6 +6,10 @@ use Faker as fk;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
+
+/**
+ * Class UsersSeeder
+ */
 class UsersSeeder extends Seeder
 {
 
@@ -17,6 +21,7 @@ class UsersSeeder extends Seeder
     public function run()
     {
         $admin = new User();
+
         $admin->name = "Admin";
         $admin->email = "admin@tasks.com";
         $admin->password = Hash::make("admin");

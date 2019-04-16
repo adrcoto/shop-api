@@ -34,6 +34,7 @@ class Electronic extends Model
         'used'
     ];
 
+    public $timestamps = false;
     /**
      * The attributes that should be hidden for arrays.
      *

@@ -22,20 +22,55 @@ class ItemsSeeder extends Seeder
     public function run()
     {
 
+        //wot ???
+        $this->addElectronicItem(
+            'Vand carlig',
+            'Vand carlig vorbitor, sugator, frecator',
+            10,
+            false,
+            Category::ELECTONICE_ELECTROCASNICE,
+            'Craiova',
+            SubCategory::ELECTROCASNICE,
+            ItemsType::APARAT_DE_BUCATARIE,
+            'Philips',
+            'Carlig - Vorbitor',
+            0,
+            true
+        );
 
-        $this->addVehicleItem('Porsche Cayenne 2012', "Tot ce-i trebuie, full option",
-            75000, true, Category::AUTO_MOTO_NAUTICA, "Craiova",
+
+        sleep(3);
+        $this->addVehicleItem(
+            'Porsche Cayenne 2012',
+            "Tot ce-i trebuie, full option",
+            75000,
+            true,
+            Category::AUTO_MOTO_NAUTICA,
+            "Craiova",
             SubCategory::AUTOTURISME,
             ItemsType::AUTOTURISM,
-            "Porsche", "Cayenne", 2012,
-            3000, 325, "Automata - PDK",
-            "SUV", "Diesel", 55000,
-            "4x4", "Euro VI", "Negru", "Romania",
-            "HGJLO34810LKJF195", true, true, false,
-            true, false);
+            "Porsche",
+            "Cayenne",
+            2012,
+            3000,
+            325,
+            "Automata - PDK",
+            "SUV",
+            "Diesel",
+            55000,
+            "4x4",
+            "Euro VI",
+            "Negru",
+            "Romania",
+            "HGJLO34810LKJF195",
+            true,
+            true,
+            false,
+            true,
+            false);
 
-        sleep(10);
-    //telefon
+        sleep(2);
+        //telefon
         $this->addElectronicItem('Samsung Galaxy S10', "E furat din UK",
             3600, false, Category::ELECTONICE_ELECTROCASNICE, "Bals",
             SubCategory::TELEFOANE,
@@ -43,7 +78,7 @@ class ItemsSeeder extends Seeder
             "Samsung", "Galaxy S10", 2018,
             false);
 
-        sleep(5);
+        sleep(1);
         //telefon
         $this->addElectronicItem('Samsung Galaxy S9+', "E furat din UK",
             2500, false, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti",
@@ -53,9 +88,9 @@ class ItemsSeeder extends Seeder
             true);
 
 
-        sleep(7);
+        sleep(2);
         //congelator
-        $this->addElectronicItem('Congelator 5 sertare artic',
+        $this->addElectronicItem('Congelator 5 sertare arctic',
             "Vând congelator 5 sertare arctic stare foarte bună de funcționare curat și complet",
             3600, false, Category::ELECTONICE_ELECTROCASNICE, "Constanta",
             SubCategory::ELECTROCASNICE,
@@ -63,14 +98,14 @@ class ItemsSeeder extends Seeder
             "Artic", "", 0,
             false);
 
-        sleep(9);
+        sleep(1);
 
         $this->addElectronicItem('Nikon D7100 + 2 obiective',
             "Nikon folosit in regim hobby.
 Vand Nikon D7.100 plus diverse accesorii in stare perfecta de functionare compus din:
-body Nikon 7.100 
+body Nikon 7.100
 Sigma 17-50 mm DSLR F2.8 EX HSM OS Montura Nikon DX
-Nikkor 35 mm f/1.8 
+Nikkor 35 mm f/1.8
 Se vinde cu toate accesoriile originale: curea, 2 baterii, incarcator si capac frontal.
 Nu se vinde separat
 Pret 3.200 lei
@@ -82,7 +117,7 @@ Trimit si in tara cu verificare colet.",
             "Nikon", "", 2017,
             true);
 
-        sleep(10);
+        sleep(3);
         //dezmembrare wot is this
         $this->addElectronicItem('Dezmembrez Zte Grand X In',
             "Dezmembrez Zte Grand X In
@@ -102,7 +137,7 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
             ItemsType::ACCESORII_GSM,
             "", "", 0,
             true);
-        sleep(5);
+        sleep(1);
 //husa
         $this->addElectronicItem('Set husa slim transparenta TPU + folie sticla Hoco iPhone X',
             'COD PRODUS: IPHONE X - HOCO SET HUSA + FOLIE
@@ -113,7 +148,7 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
             "", "", 0,
             false);
 
-        sleep(5);
+        sleep(2);
         $this->addVehicleItem('Dacia 130', "Merge ca atunci cand am luat-o",
             1500, false, Category::AUTO_MOTO_NAUTICA, "Craiova",
             SubCategory::AUTOTURISME,
@@ -125,7 +160,7 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
             "HGJLO348HHHKJF195", true, false, true,
             false, false);
 
-        sleep(10);
+        sleep(2);
 
         //rama allview
         $this->addElectronicItem('Rama mijloc allview x4 soul mini',
@@ -135,8 +170,6 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
             ItemsType::ACCESORII_GSM,
             "Allview", "X4 Soul Mini", 0,
             false);
-
-
     }
 
 

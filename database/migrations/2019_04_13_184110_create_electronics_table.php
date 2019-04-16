@@ -23,7 +23,6 @@ class CreateElectronicsTable extends Migration
             $table->string('model');
             $table->string('manufacturer_year');
             $table->boolean('used');
-            $table->timestamps();
         });
 
         Schema::table('electronics', function ($table){
