@@ -4,6 +4,7 @@ namespace App\Http\Controllers\v1;
 
 
 use App\Item;
+use App\ItemsType;
 use App\Role;
 use App\User;
 use App\Electronic;
@@ -53,23 +54,49 @@ class ItemController extends Controller
     {
         try {
             /*
-             * Sends items with images
+             * Sends searched items with images
              */
 
-            if ($request->has('q'))
-                $result = Item::where('title', 'LIKE', '%' . $request->q . '%')->get();
-            else
-                $result = Item::all();
+            $items = new Collection();
 
+            if ($request->has('q')) {
+                $vehicles = DB::table('items')
+                    ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
+                    ->where('items.title', 'LIKE', '%' . $request->q . '%')
+                    ->orderBy('updated_at', 'desc')
+                    ->get();
 
-            $items = collect();
-            foreach ($result as $item) {
-                $itemImages = ItemsImage::where('item_id', $item->id)->get();
+                //electronics
+                $electronics = DB::table('items')
+                    ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
+                    ->where('items.title', 'LIKE', '%' . $request->q . '%')
+                    ->orderBy('updated_at', 'desc')
+                    ->get();
+            } else {
+                $vehicles = DB::table('items')
+                    ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
+                    ->orderBy('updated_at', 'desc')
+                    ->get();
 
-                $buffer = collect($item);
-                $itemWithImages = $buffer->merge(['images' => $itemImages]);
-                $items->push($itemWithImages);
+                //electronics
+                $electronics = DB::table('items')
+                    ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
+                    ->orderBy('updated_at', 'desc')
+                    ->get();
             }
+
+
+            foreach ($vehicles as $vehicle)
+                $items->push($vehicle);
+
+            foreach ($electronics as $electronic)
+                $items->push($electronic);
+            foreach ($items as $item)
+                $item->images = DB::table('items_images')->where('item_id', '=', $item->item_id)->get();
+
+            if ($items->isEmpty())
+                return $this->returnNotFound('Bate vantul pe aici');
+            $this->quickSort($items, 0, count($items) - 1);
 
 
             return $this->returnSuccess($items);
@@ -97,6 +124,7 @@ class ItemController extends Controller
                 'currency' => 'required',
                 'category' => 'required|exists:categories,id',
                 'sub_category' => 'required|exists:sub_categories,id',
+                'type' => 'required|exists:items_types,id',
                 'location' => 'required',
             ];
 
@@ -106,15 +134,24 @@ class ItemController extends Controller
             if (!$validator->passes())
                 return $this->returnBadRequest($validator->errors());
 
-
             $category = $request->category;
             $sub_category = $request->sub_category;
+            $type = $request->type;
+
             //array that contains all subcategories for a given category
-            $sub = SubCategory::where('category', $category)->get();
+            $sub_categories = SubCategory::where('category', $category)->get();
 
             //checks if provided subcategory exists in selected category
-            if (!$sub->contains($request->sub_category))
-                return $this->returnBadRequest('Invalid Category');
+            if (!$sub_categories->contains($sub_category))
+                return $this->returnBadRequest('Invalid Sub-category');
+
+            //checks if provided item type exists in selected category->subcategory
+            $item_types = ItemsType::where('sub_category', $request->sub_category)->get();
+
+
+            if (!$item_types->contains($type))
+                return $this->returnBadRequest('Invalid item type');
+
 
             $item = new Item();
 
@@ -122,7 +159,7 @@ class ItemController extends Controller
             $item->description = $request->description;
             $item->price = $request->price;
             $item->currency = $request->currency;
-            $item->sub_category = $sub_category;
+            $item->category = $category;
             $item->location = $request->location;
             $item->status = Item::STATUS_ACTIVE;
             $item->owner = $user->id;
@@ -131,68 +168,110 @@ class ItemController extends Controller
 
             switch ($category) {
                 case Category::ELECTONICE_ELECTROCASNICE :
-                    //check for sub_category
-                    switch ($sub_category) {
-                        case SubCategory::LAPTOP_PC_PERIFERICE :
-                            //todo create item and save it
-                            break;
-                        case SubCategory::TELEFOANE :
-                            //todo create item and save it
-                            break;
-                        case SubCategory::TV_AUDIO_FOTO_VIDEO :
-                            //todo create item and save it
-                            break;
+
+                    if ($request->has('manufacturer') || $request->has('model') || $request->has('manufacturer_year') || $request->has('used')) {
+                        $electronic = new Electronic();
+
+                        $electronic->item_id = $item->id;
+                        $electronic->sub_category = $sub_category;
+                        $electronic->item_type = $type;
+
+                        if ($request->has('manufacturer'))
+                            $electronic->manufacturer = $request->manufacturer;
+
+                        if ($request->has('model'))
+                            $electronic->model = $request->model;
+
+                        if ($request->has('manufacturer_year'))
+                            $electronic->manufacturer_year = $request->manufacturer_year;
+
+                        if ($request->has('used'))
+                            $electronic->used = $request->used;
+
+                        $electronic->save();
                     }
                     break;
+
                 case  Category::AUTO_MOTO_NAUTICA :
-                    //check for sub_category
+                    if ($request->has('manufacturer') || $request->has('model') || $request->has('manufacturer_year') || $request->has('used')) {
 
-                    //todo create item and save it
-                    $vehicles = new Vehicle();
-                    //building the vehicles object
+                        $vehicle = new Vehicle();
+                        //building the vehicles object
 
-                    $vehicles->item_id = $item->id;
-                    $vehicles->sub_category = SubCategory::AUTOTURISME;
+                        $vehicle->item_id = $item->id;
+                        $vehicle->sub_category = $sub_category;
+                        $vehicle->item_type = $type;
 
-                    $vehicles->manufacturer = $request->manufacturer;
-                    $vehicles->model = $request->model;
-                    $vehicles->body = $request->body;
-                    $vehicles->fuel_type = $request->fuel_type;
-                    $vehicles->manufacturer_year = $request->manufacturer_year;
-                    $vehicles->mileage = $request->mileage;
-                    $vehicles->used  = $request->status;
-                    $vehicles->engine = $request->engine;
-                    $vehicles->origin = $request->origin;
-                    $vehicles->power = $request->power;
-                    $vehicles->gearbox = $request->gearbox;
-                    $vehicles->drive = $request->drive;
-                    $vehicles->emission_class = $request->emission_class;
-                    $vehicles->color = $request->color;
-                    $vehicles->VIN = $request->VIN;
-                    $vehicles->pollution_tax = $request->pollution_tax;
-                    $vehicles->damaged = $request->damaged;
-                    $vehicles->registered = $request->registered;
-                    $vehicles->first_owner = $request->first_owner;
-                    $vehicles->right_hand_drive = $request->right_hand_drive;
+                        if ($request->has('manufacturer'))
+                            $vehicle->manufacturer = $request->manufacturer;
 
-                    $vehicles->save();
+                        if ($request->has('model'))
+                            $vehicle->model = $request->model;
 
-                    if ($request->has('images'))
-                        foreach ($request->images as $image) {
-                            $filename = $image->store('images', 'public');
-                            ItemsImage::create([
-                                'item_id' => $item->id,
-                                'filename' => $filename
-                            ]);
-                        }
-                    break;
-                case SubCategory::MOTOCICLETE_ATV_SCUTERE :
-                    //todo create item and save it
-                    break;
-                case SubCategory::PIESE_ACCESORII_CONSUMABILE :
-                    //todo create item and save it
+                        if ($request->has('manufacturer_year'))
+                            $vehicle->manufacturer_year = $request->manufacturer_year;
+
+                        if ($request->has('engine'))
+                            $vehicle->engine = $request->engine;
+
+                        if ($request->has('power'))
+                            $vehicle->power = $request->power;
+
+                        if ($request->has('gearbox'))
+                            $vehicle->gearbox = $request->gearbox;
+
+                        if ($request->has('body'))
+                            $vehicle->body = $request->body;
+
+                        if ($request->has('fuel_type'))
+                            $vehicle->fuel_type = $request->fuel_type;
+
+                        if ($request->has('mileage'))
+                            $vehicle->mileage = $request->mileage;
+
+                        if ($request->has('drive'))
+                            $vehicle->drive = $request->drive;
+
+                        if ($request->has('emission_class'))
+                            $vehicle->emission_class = $request->emission_class;
+
+                        if ($request->has('color'))
+                            $vehicle->color = $request->color;
+
+                        if ($request->has('origin'))
+                            $vehicle->origin = $request->origin;
+
+                        if ($request->has('VIN'))
+                            $vehicle->VIN = $request->VIN;
+
+                        if ($request->has('used'))
+                            $vehicle->used = $request->used;
+
+                        if ($request->has('pollution_tax'))
+                            $vehicle->pollution_tax = $request->pollution_tax;
+
+                        if ($request->has('damaged'))
+                            $vehicle->damaged = $request->damaged;
+
+                        if ($request->has('first_owner'))
+                            $vehicle->first_owner = $request->first_owner;
+
+                        if ($request->has('right_hand_drive'))
+                            $vehicle->right_hand_drive = $request->right_hand_drive;
+
+                        $vehicle->save();
+                    }
                     break;
             }
+
+            if ($request->has('images'))
+                foreach ($request->images as $image) {
+                    $filename = $image->store('images', 'public');
+                    ItemsImage::create([
+                        'item_id' => $item->id,
+                        'filename' => $filename
+                    ]);
+                }
 
             return $this->returnSuccess();
         } catch (\Exception $e) {
@@ -287,34 +366,65 @@ class ItemController extends Controller
         }
     }
 
+
     public function test(Request $request)
     {
         try {
-            $items = DB::select('select * from items as i, vehicles as v, electronics as e where i.item_id = v.item_id or i.item_id = e.item_id group by i.updated_at desc');
+            $category = $request->category;
+            $sub_category = $request->sub_category;
+            $type = $request->type;
 
-            foreach ($items as $item)
-                $item->images = DB::table('items_images')->where('item_id', '=', $item->item_id)->get();
+            //array that contains all subcategories for a given category
+            $sub_categories = SubCategory::where('category', $category)->get();
 
+            //checks if provided subcategory exists in selected category
+            if (!$sub_categories->contains($sub_category))
+                return $this->returnBadRequest('Invalid Sub-category');
 
-
-            $wwww = DB::table('items')
-                ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
-                ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
-                ->get();
-//
-//            foreach ($items as $vehicle)
-//                $vehicle->images = DB::table('items_images')->where('item_id', '=', $vehicle->item_id)->get();
-
+            //checks if provided item type exists in selected category->subcategory
+            $item_types = ItemsType::where('sub_category', $request->sub_category)->get();
 
 
+            if (!$item_types->contains($type))
+                return $this->returnBadRequest('Invalid item type');
 
-
-
-
-            return $this->returnSuccess($items);
-
-        } catch (\Exception $e) {
+            return $this->returnSuccess();
+        } catch
+        (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
     }
+
+
+    private function partition(&$arr, $leftIndex, $rightIndex)
+    {
+        $pivot = $arr[($leftIndex + $rightIndex) / 2]->created_at;
+
+        while ($leftIndex <= $rightIndex) {
+            while ($arr[$leftIndex]->created_at > $pivot)
+                $leftIndex++;
+            while ($arr[$rightIndex]->created_at < $pivot)
+                $rightIndex--;
+            if ($leftIndex <= $rightIndex) {
+                $tmp = $arr[$leftIndex];
+                $arr[$leftIndex] = $arr[$rightIndex];
+                $arr[$rightIndex] = $tmp;
+                $leftIndex++;
+                $rightIndex--;
+            }
+        }
+        return $leftIndex;
+    }
+
+
+    private function quickSort(&$arr, $leftIndex, $rightIndex)
+    {
+        $index = $this->partition($arr, $leftIndex, $rightIndex);
+        if ($leftIndex < $index - 1)
+            $this->quickSort($arr, $leftIndex, $index - 1);
+        if ($index < $rightIndex)
+            $this->quickSort($arr, $index, $rightIndex);
+    }
+
+
 }

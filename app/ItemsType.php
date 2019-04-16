@@ -24,8 +24,8 @@ class ItemsType extends Model
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::TELEFOANE, 'name' => 'Accesorii-GSM'],
 
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::TABLETE_EREADERE_GADGETURI, 'name' => 'Tablete'],
-        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::TABLETE_EREADERE_GADGETURI,'name' => 'E-reader'],
-        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::TABLETE_EREADERE_GADGETURI,'name' => 'Gadget-uri'],
+        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::TABLETE_EREADERE_GADGETURI, 'name' => 'E-reader'],
+        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::TABLETE_EREADERE_GADGETURI, 'name' => 'Gadget-uri'],
 
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::TV_AUDIO_FOTO_VIDEO, 'name' => 'Televizoare-Accesorii'],
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::TV_AUDIO_FOTO_VIDEO, 'name' => 'Boxe-Sisteme audio'],
@@ -38,7 +38,13 @@ class ItemsType extends Model
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::JOCURI_CONSOLE, 'name' => 'Console'],
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::JOCURI_CONSOLE, 'name' => 'Accesorii'],
 
-        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ELECTROCASNICE, 'name' => 'Electrocasnice'],
+        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ELECTROCASNICE, 'name' => 'Aparat de bucatarie'],
+        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ELECTROCASNICE, 'name' => 'Aragazuri, cuptoare-plite si hote'],
+        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ELECTROCASNICE, 'name' => 'Aparate frigorifice'],
+        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ELECTROCASNICE, 'name' => 'Masini de cusut'],
+        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ELECTROCASNICE, 'name' => 'Masini de spalat'],
+        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ELECTROCASNICE, 'name' => 'Electrocasnice mici'],
+        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ELECTROCASNICE, 'name' => 'Alte aparate electrice'],
 
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ECHIPAMENTE_DE_BIROU, 'name' => 'Imprimante-Copiatoare-Scannere'],
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ECHIPAMENTE_DE_BIROU, 'name' => 'Telefoane fixe - Faxuri-centrale'],
@@ -65,8 +71,6 @@ class ItemsType extends Model
         ['category' => Category::AUTO_MOTO_NAUTICA, 'sub_category' => SubCategory::JANTE_ANVELOPE, 'name' => 'Jante'],
         ['category' => Category::AUTO_MOTO_NAUTICA, 'sub_category' => SubCategory::JANTE_ANVELOPE, 'name' => 'Anvelope'],
     ];
-
-
 
 
     const LAPTOP = 1;
