@@ -89,9 +89,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function tasks()
+    public function items()
     {
-        return $this->hasMany('App/Item', 'assign', 'id');
+        return $this->hasMany('App/Item');
     }
 
 

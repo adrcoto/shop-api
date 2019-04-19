@@ -6,20 +6,17 @@ namespace App\Http\Controllers\v1;
 use App\Item;
 use App\ItemsType;
 use App\Role;
-use App\User;
 use App\Electronic;
 use App\Vehicle;
 use App\ItemsImage;
 use App\Category;
 use App\SubCategory;
 
-
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
-
 
 /**
  * Class ItemController
@@ -28,22 +25,6 @@ use Illuminate\Support\Collection;
  */
 class ItemController extends Controller
 {
-    /**
-     * Get tasks list
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getAll()
-    {
-        try {
-            $items = Item::paginate(10);
-            //$items = Item::where('category', 1)->where('sub_category', 1)->get();
-
-            return $this->returnSuccess($items);
-        } catch (\Exception $e) {
-            return $this->returnError($e->getMessage());
-        }
-    }
 
     /**
      * Search for items
@@ -105,11 +86,10 @@ class ItemController extends Controller
         }
     }
 
+
     /**
      * Create an item
-     *
-     * @param Request $request
-     *
+     * @param Request $request*
      * @return \Illuminate\Http\JsonResponse
      */
     public function create(Request $request)
@@ -279,42 +259,146 @@ class ItemController extends Controller
         }
     }
 
+
     /**
-     * Update a task
-     *
+     * Update an item
      * @param Request $request
      * @param $id
-     *
      * @return \Illuminate\Http\JsonResponse
+     */
+    /*
+     * Title, Price, currency, negotiable, exchange, used, sold by, description, images, contact data
      */
     public function update(Request $request, $id)
     {
         try {
             $user = $this->validateSession();
 
-            $task = Item::find($id);
+            $item = Item::find($id);
 
-            if ($user->role_id === Role::ROLE_USER && $user->id !== $task->assign) {
+            if (!$item)
+                $this->returnBadRequest('Item not found');
+
+            if ($user->role_id === Role::ROLE_USER && $user->id !== $item->owner)
                 return $this->returnError('You don\'t have permission to update this task');
+
+            if ($request->has('title'))
+                $item->title = $request->title;
+
+            if ($request->has('description'))
+                $item->description = $request->description;
+
+            if ($request->has('price'))
+                $item->price = $request->price;
+
+            if ($request->has('currency'))
+                $item->currency = $request->currency;
+
+            if ($request->has('location'))
+                $item->location = $request->location;
+
+            switch ($item->category) {
+                case Category::ELECTONICE_ELECTROCASNICE :
+
+                    if ($request->has('manufacturer') || $request->has('model') || $request->has('manufacturer_year') || $request->has('used')) {
+
+                        $electronic = Electronic::find($id);
+
+                        if ($request->has('manufacturer'))
+                            $electronic->manufacturer = $request->manufacturer;
+
+                        if ($request->has('model'))
+                            $electronic->model = $request->model;
+
+                        if ($request->has('manufacturer_year'))
+                            $electronic->manufacturer_year = $request->manufacturer_year;
+
+                        if ($request->has('used'))
+                            $electronic->used = $request->used;
+
+                        $electronic->save();
+                    }
+                    break;
+
+                case  Category::AUTO_MOTO_NAUTICA :
+                    if ($request->has('manufacturer') || $request->has('model') || $request->has('manufacturer_year') || $request->has('used')) {
+
+                        $vehicle = Vehicle::find($id);
+
+                        if ($request->has('manufacturer'))
+                            $vehicle->manufacturer = $request->manufacturer;
+
+                        if ($request->has('model'))
+                            $vehicle->model = $request->model;
+
+                        if ($request->has('manufacturer_year'))
+                            $vehicle->manufacturer_year = $request->manufacturer_year;
+
+                        if ($request->has('engine'))
+                            $vehicle->engine = $request->engine;
+
+                        if ($request->has('power'))
+                            $vehicle->power = $request->power;
+
+                        if ($request->has('gearbox'))
+                            $vehicle->gearbox = $request->gearbox;
+
+                        if ($request->has('body'))
+                            $vehicle->body = $request->body;
+
+                        if ($request->has('fuel_type'))
+                            $vehicle->fuel_type = $request->fuel_type;
+
+                        if ($request->has('mileage'))
+                            $vehicle->mileage = $request->mileage;
+
+                        if ($request->has('drive'))
+                            $vehicle->drive = $request->drive;
+
+                        if ($request->has('emission_class'))
+                            $vehicle->emission_class = $request->emission_class;
+
+                        if ($request->has('color'))
+                            $vehicle->color = $request->color;
+
+                        if ($request->has('origin'))
+                            $vehicle->origin = $request->origin;
+
+                        if ($request->has('VIN'))
+                            $vehicle->VIN = $request->VIN;
+
+                        if ($request->has('used'))
+                            $vehicle->used = $request->used;
+
+                        if ($request->has('pollution_tax'))
+                            $vehicle->pollution_tax = $request->pollution_tax;
+
+                        if ($request->has('damaged'))
+                            $vehicle->damaged = $request->damaged;
+
+                        if ($request->has('first_owner'))
+                            $vehicle->first_owner = $request->first_owner;
+
+                        if ($request->has('right_hand_drive'))
+                            $vehicle->right_hand_drive = $request->right_hand_drive;
+
+                        $vehicle->save();
+                    }
+                    break;
             }
 
-            if ($request->has('name')) {
-                $task->name = $request->name;
-            }
 
-            if ($request->has('description')) {
-                $task->description = $request->description;
-            }
+            if ($request->has('images'))
+                foreach ($request->images as $image) {
+                    $filename = $image->store('images', 'public');
+                    ItemsImage::create([
+                        'item_id' => $item->id,
+                        'filename' => $filename
+                    ]);
+                }
 
-            if ($request->has('status')) {
-                $task->status = $request->status;
-            }
 
-            if ($request->has('assign')) {
-                $task->assign = $request->assign;
-            }
-
-            $task->save();
+            $item->save();
 
             return $this->returnSuccess();
         } catch (\Exception $e) {
@@ -322,11 +406,10 @@ class ItemController extends Controller
         }
     }
 
+
     /**
-     * Delete a task
-     *
+     * Delete an item
      * @param $id
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function delete($id)
@@ -334,13 +417,15 @@ class ItemController extends Controller
         try {
             $user = $this->validateSession();
 
-            if ($user->role_id !== Role::ROLE_ADMIN) {
-                return $this->returnError('You don\'t have permission to delete this task');
-            }
+            $item = Item::find($id);
 
-            $task = Item::find($id);
+            if (!$item)
+                return $this->returnBadRequest('Item not found');
 
-            $task->delete();
+            if ($user->role_id === Role::ROLE_USER && $user->id !== $item->owner)
+                return $this->returnError('You don\'t have permission to delete this item');
+
+            $item->delete();
 
             return $this->returnSuccess();
         } catch (\Exception $e) {
@@ -348,45 +433,15 @@ class ItemController extends Controller
         }
     }
 
+
     /**
-     * Takes images for certain item
-     * @param $id
+     * Testing purposes
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-
-    public function getImages($id)
-    {
-
-        try {
-            $images = ItemsImage::where('item_id', $id)->get();
-
-            return $this->returnSuccess($images);
-        } catch (\Exception $e) {
-            return $this->returnError($e->getMessage());
-        }
-    }
-
-
     public function test(Request $request)
     {
         try {
-            $category = $request->category;
-            $sub_category = $request->sub_category;
-            $type = $request->type;
-
-            //array that contains all subcategories for a given category
-            $sub_categories = SubCategory::where('category', $category)->get();
-
-            //checks if provided subcategory exists in selected category
-            if (!$sub_categories->contains($sub_category))
-                return $this->returnBadRequest('Invalid Sub-category');
-
-            //checks if provided item type exists in selected category->subcategory
-            $item_types = ItemsType::where('sub_category', $request->sub_category)->get();
-
-
-            if (!$item_types->contains($type))
-                return $this->returnBadRequest('Invalid item type');
 
             return $this->returnSuccess();
         } catch
@@ -395,6 +450,21 @@ class ItemController extends Controller
         }
     }
 
+
+    /**
+     * Sort items by updated_at in desc order
+     * @param $arr
+     * @param $leftIndex
+     * @param $rightIndex
+     */
+    private function quickSort(&$arr, $leftIndex, $rightIndex)
+    {
+        $index = $this->partition($arr, $leftIndex, $rightIndex);
+        if ($leftIndex < $index - 1)
+            $this->quickSort($arr, $leftIndex, $index - 1);
+        if ($index < $rightIndex)
+            $this->quickSort($arr, $index, $rightIndex);
+    }
 
     private function partition(&$arr, $leftIndex, $rightIndex)
     {
@@ -415,16 +485,4 @@ class ItemController extends Controller
         }
         return $leftIndex;
     }
-
-
-    private function quickSort(&$arr, $leftIndex, $rightIndex)
-    {
-        $index = $this->partition($arr, $leftIndex, $rightIndex);
-        if ($leftIndex < $index - 1)
-            $this->quickSort($arr, $leftIndex, $index - 1);
-        if ($index < $rightIndex)
-            $this->quickSort($arr, $index, $rightIndex);
-    }
-
-
 }

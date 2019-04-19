@@ -33,6 +33,7 @@ class Item extends Model
      *
      * @var array
      */
+
     protected $fillable = [
         'title',
         'description',
@@ -43,6 +44,8 @@ class Item extends Model
         'status',
         'owner'
     ];
+
+    protected $primaryKey = 'item_id';
 
     /**
      * The attributes that should be hidden for arrays.

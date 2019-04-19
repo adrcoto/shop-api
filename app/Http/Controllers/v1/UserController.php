@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
  */
 class UserController extends Controller
 {
+
     /**
      * Login User
      *
@@ -64,11 +65,10 @@ class UserController extends Controller
         }
     }
 
+
     /**
      * Register user
-     *
      * @param Request $request
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(Request $request)
@@ -96,10 +96,8 @@ class UserController extends Controller
 
             $user->save();
 
-            //TODO should sent an email to user with code
             $emailService = new EmailService();
             $emailService->sendVerifyAccount($user);
-
 
             return $this->returnSuccess();
         } catch (\Exception $e) {
@@ -107,13 +105,15 @@ class UserController extends Controller
         }
     }
 
+
     /**
-     * Verifys account
+     * Verify account
      * @param Request $request
      * @param User $userModel
      * @return \Illuminate\Http\JsonResponse
      */
-    public function verify(Request $request, User $userModel){
+    public function verify(Request $request, User $userModel)
+    {
         try {
             $rules = [
                 'email' => 'required|email|exists:users',
@@ -145,12 +145,11 @@ class UserController extends Controller
         }
     }
 
+
     /**
      * Forgot password
-     *
      * @param Request $request
      * @param User $userModel
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function forgotPassword(Request $request, User $userModel)
@@ -166,14 +165,12 @@ class UserController extends Controller
                 return $this->returnBadRequest('Please fill all required fields');
             }
 
-            $user = $userModel::where('email', $request->email)->get()->first();
+            $user = $userModel::where('email', $request->email)->first();
 
             $user->forgot_code = strtoupper(str_random(6));
             $user->save();
 
-            //TODO should sent an email to user with code
             $emailService = new EmailService();
-
             $emailService->sendForgotPassword($user);
 
             return $this->returnSuccess();
@@ -182,12 +179,11 @@ class UserController extends Controller
         }
     }
 
+
     /**
      * Change user password
-     *
      * @param Request $request
      * @param User $userModel
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function changePassword(Request $request, User $userModel)
@@ -222,27 +218,10 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Get logged user
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function get()
-    {
-        try {
-            $user = $this->validateSession();
-
-            return $this->returnSuccess($user);
-        } catch (\Exception $e) {
-            return $this->returnError($e->getMessage());
-        }
-    }
 
     /**
      * Update logged user
-     *
      * @param Request $request
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request)
@@ -250,16 +229,13 @@ class UserController extends Controller
         try {
             $user = $this->validateSession();
 
-            if ($request->has('name')) {
+            if ($request->has('name'))
                 $user->name = $request->name;
-            }
 
-            if ($request->has('password')) {
+            if ($request->has('password'))
                 $user->password = Hash::make($request->password);
-            }
 
             $user->save();
-
             return $this->returnSuccess($user);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
