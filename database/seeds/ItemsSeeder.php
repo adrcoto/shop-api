@@ -188,7 +188,7 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
         $item->owner = $user->id;
         $item->save();
 
-        return $item->id;
+        return $item->item_id;
     }
 
 
@@ -204,7 +204,7 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
 
         $vehicle = new Vehicle();
 
-        $vehicle->item_id = $this->addItem($title, $description, $price, $currency, $category, $location);;
+        $vehicle->item_id = $this->addItem($title, $description, $price, $currency, $category, $location);
         $vehicle->sub_category = $sub_category;
         $vehicle->item_type = $type;
 
@@ -237,7 +237,7 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
     {
         $electronic = new Electronic();
 
-        $electronic->item_id = $this->addItem($title, $description, $price, $currency, $category, $location);;
+        $electronic->item_id = $this->addItem($title, $description, $price, $currency, $category, $location);
         $electronic->sub_category = $sub_category;
         $electronic->item_type = $type;
         $electronic->manufacturer = $manufacturer;

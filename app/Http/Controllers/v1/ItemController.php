@@ -15,6 +15,7 @@ use App\SubCategory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
 
@@ -152,7 +153,7 @@ class ItemController extends Controller
                     if ($request->has('manufacturer') || $request->has('model') || $request->has('manufacturer_year') || $request->has('used')) {
                         $electronic = new Electronic();
 
-                        $electronic->item_id = $item->id;
+                        $electronic->item_id = $item->item_id;
                         $electronic->sub_category = $sub_category;
                         $electronic->item_type = $type;
 
@@ -173,12 +174,16 @@ class ItemController extends Controller
                     break;
 
                 case  Category::AUTO_MOTO_NAUTICA :
-                    if ($request->has('manufacturer') || $request->has('model') || $request->has('manufacturer_year') || $request->has('used')) {
+                    if ($request->has('manufacturer') || $request->has('model') || $request->has('manufacturer_year') || $request->has('engine') ||
+                        $request->has('power') || $request->has('gearbox') || $request->has('body') || $request->has('fuel_type') ||
+                        $request->has('mileage') || $request->has('drive') || $request->has('emission_class') || $request->has('color') ||
+                        $request->has('origin') || $request->has('VIN') || $request->has('used') || $request->has('pollution_tax') ||
+                        $request->has('damaged') || $request->has('first_owner') || $request->has('registered') || $request->has('right_hand_drive')) {
 
                         $vehicle = new Vehicle();
                         //building the vehicles object
 
-                        $vehicle->item_id = $item->id;
+                        $vehicle->item_id = $item->item_id;
                         $vehicle->sub_category = $sub_category;
                         $vehicle->item_type = $type;
 
@@ -233,6 +238,9 @@ class ItemController extends Controller
                         if ($request->has('damaged'))
                             $vehicle->damaged = $request->damaged;
 
+                        if ($request->has('registered'))
+                            $vehicle->registered = $request->registered;
+
                         if ($request->has('first_owner'))
                             $vehicle->first_owner = $request->first_owner;
 
@@ -248,7 +256,7 @@ class ItemController extends Controller
                 foreach ($request->images as $image) {
                     $filename = $image->store('images', 'public');
                     ItemsImage::create([
-                        'item_id' => $item->id,
+                        'item_id' => $item->item_id,
                         'filename' => $filename
                     ]);
                 }
@@ -388,14 +396,7 @@ class ItemController extends Controller
             }
 
 
-            if ($request->has('images'))
-                foreach ($request->images as $image) {
-                    $filename = $image->store('images', 'public');
-                    ItemsImage::create([
-                        'item_id' => $item->id,
-                        'filename' => $filename
-                    ]);
-                }
+
 
 
             $item->save();
@@ -442,8 +443,36 @@ class ItemController extends Controller
     public function test(Request $request)
     {
         try {
+        $message = "";
+            $images =  ItemsImage::where("item_id", $request->item_id)->get();
+            $initialImagesCounter = $images->count();
 
-            return $this->returnSuccess();
+            if ($request->has('images')) {
+                $newImagesCounter = count($request->images);
+
+                if ($initialImagesCounter < $newImagesCounter)
+                    $message = "Need to add new images";
+
+                else if ($initialImagesCounter > $newImagesCounter)
+                    $message = "He deleted one or more images";
+
+                else
+                    $message = "I need to check if he modified them";
+            }
+
+            /**
+             * Takes images for an item
+             * deletes images from db
+             * deletes images from storage
+             */
+
+//              foreach ($images as $image) {
+//                  $deleted = Storage::disk('public')->delete($image->filename);
+//                  $image->delete();
+//              }
+
+
+            return $this->returnSuccess($message);
         } catch
         (\Exception $e) {
             return $this->returnError($e->getMessage());
@@ -468,12 +497,12 @@ class ItemController extends Controller
 
     private function partition(&$arr, $leftIndex, $rightIndex)
     {
-        $pivot = $arr[($leftIndex + $rightIndex) / 2]->created_at;
+        $pivot = $arr[($leftIndex + $rightIndex) / 2]->updated_at;
 
         while ($leftIndex <= $rightIndex) {
-            while ($arr[$leftIndex]->created_at > $pivot)
+            while ($arr[$leftIndex]->updated_at > $pivot)
                 $leftIndex++;
-            while ($arr[$rightIndex]->created_at < $pivot)
+            while ($arr[$rightIndex]->updated_at < $pivot)
                 $rightIndex--;
             if ($leftIndex <= $rightIndex) {
                 $tmp = $arr[$leftIndex];
