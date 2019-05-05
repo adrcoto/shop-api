@@ -96,8 +96,8 @@ class UserController extends Controller
 
             $user->save();
 
-            $emailService = new EmailService();
-            $emailService->sendVerifyAccount($user);
+            // $emailService = new EmailService();
+            // $emailService->sendVerifyAccount($user);
 
             return $this->returnSuccess();
         } catch (\Exception $e) {
