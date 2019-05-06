@@ -65,6 +65,22 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Get logged user
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function get()
+    {
+        try {
+            $user = $this->validateSession();
+
+            return $this->returnSuccess($user);
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
+    }
+
 
     /**
      * Register user
@@ -77,7 +93,7 @@ class UserController extends Controller
             $rules = [
                 'name' => 'required',
                 'email' => 'required|email|unique:users',
-                'password' => 'required'
+                'password' => 'required',
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -91,13 +107,14 @@ class UserController extends Controller
             $user->name = $request->name;
             $user->email = $request->email;
             $user->password = Hash::make($request->password);
-            $user->status = strtoupper(str_random(6));
+            $user->status = str_random(128);
             $user->role_id = Role::ROLE_USER;
 
             $user->save();
 
-            // $emailService = new EmailService();
-            // $emailService->sendVerifyAccount($user);
+            $url = $request->url;
+            $emailService = new EmailService();
+            $emailService->sendVerifyAccount($user, $url);
 
             return $this->returnSuccess();
         } catch (\Exception $e) {
@@ -116,7 +133,7 @@ class UserController extends Controller
     {
         try {
             $rules = [
-                'email' => 'required|email|exists:users',
+//                'email' => 'required|email|exists:users',
                 'code' => 'required'
             ];
 
@@ -126,13 +143,14 @@ class UserController extends Controller
                 return $this->returnBadRequest('Please fill all required fields');
             }
 
-            $user = $userModel::where('email', $request->email)->get()->first();
+//            $user = $userModel::where('email', $request->email)->get()->first();
+            $user = $userModel::where('status', $request->code)->get()->first();
 
             if (!$user)
                 return $this->returnNotFound('User not found');
 
-            if ($user->status != $request->code)
-                return $this->returnError('Invalid code');
+//            if ($user->status != $request->code)
+//                return $this->returnError('Invalid code');
 
             $user->status = '1';
 

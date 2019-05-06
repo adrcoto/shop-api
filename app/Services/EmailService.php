@@ -28,11 +28,12 @@ class EmailService
     }
 
     /**
-     * Send cond on email for verifying accunt
+     * Send  email for verifying accunt
      * @param User $user
+     * @param string $url
      */
-    public function sendVerifyAccount(User $user){
-        Mail::send('emails.verify', ['user' => $user], function($message) use ($user){
+    public function sendVerifyAccount(User $user, string $url){
+        Mail::send('emails.verify', ['user' => $user, 'url' => $url], function($message) use ($user){
             $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
             $message->subject(env('MAIL_APP_NAME'). ' - Verify your account');
 

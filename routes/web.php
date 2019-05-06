@@ -67,5 +67,4 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
         $router->patch('/{id}', ['uses' => 'ItemController@update']);
         $router->delete('/{id}', ['uses' => 'ItemController@delete']);
     });
-
 });
