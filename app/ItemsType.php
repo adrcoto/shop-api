@@ -36,7 +36,7 @@ class ItemsType extends Model
 
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::JOCURI_CONSOLE, 'name' => 'Jocuri'],
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::JOCURI_CONSOLE, 'name' => 'Console'],
-        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::JOCURI_CONSOLE, 'name' => 'Accesorii'],
+        ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::JOCURI_CONSOLE, 'name' => 'Accesorii console'],
 
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ELECTROCASNICE, 'name' => 'Aparat de bucatarie'],
         ['category' => Category::ELECTONICE_ELECTROCASNICE, 'sub_category' => SubCategory::ELECTROCASNICE, 'name' => 'Aragazuri, cuptoare-plite si hote'],
