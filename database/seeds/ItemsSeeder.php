@@ -1,6 +1,7 @@
 <?php
 
 
+use App\ItemsImage;
 use App\User;
 use Illuminate\Database\Seeder;
 use App\Vehicle;
@@ -22,21 +23,11 @@ class ItemsSeeder extends Seeder
     public function run()
     {
 
-        //wot ???
-        $this->addElectronicItem(
-            'Vand carlig',
-            'Vand carlig vorbitor, sugator, frecator',
-            10,
-            false,
-            Category::ELECTONICE_ELECTROCASNICE,
-            'Craiova',
-            SubCategory::ELECTROCASNICE,
-            ItemsType::APARAT_DE_BUCATARIE,
-            'Philips',
-            'Carlig - Vorbitor',
-            0,
-            true
-        );
+        $images = [
+            'images/cayenne/cayenne.png',
+            'images/cayenne/cayenne1.jpg',
+            'images/cayenne/cayenne2.jpg',
+        ];
 
 
         sleep(3);
@@ -47,6 +38,7 @@ class ItemsSeeder extends Seeder
             true,
             Category::AUTO_MOTO_NAUTICA,
             "Craiova",
+            $images,
             SubCategory::AUTOTURISME,
             ItemsType::AUTOTURISM,
             "Porsche",
@@ -69,35 +61,67 @@ class ItemsSeeder extends Seeder
             true,
             false);
 
+
+        $images = [
+            'images/s10/1.jpg',
+            'images/s10/2.jpg',
+            'images/s10/3.jpg',
+            'images/s10/4.jpg',
+            'images/s10/5.jpg',
+            'images/s10/6.jpg',
+        ];
+
         sleep(2);
         //telefon
         $this->addElectronicItem('Samsung Galaxy S10', "E furat din UK",
             3600, false, Category::ELECTONICE_ELECTROCASNICE, "Bals",
+            $images,
             SubCategory::TELEFOANE,
             ItemsType::TELEFOANE_MOBILE,
             "Samsung", "Galaxy S10", 2018,
             false);
 
+        $images = [
+            'images/s9+/1.jpg',
+            'images/s9+/2.jpg',
+            'images/s9+/3.jpeg',
+        ];
         sleep(1);
         //telefon
         $this->addElectronicItem('Samsung Galaxy S9+', "E furat din UK",
             2500, false, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti",
+            $images,
             SubCategory::TELEFOANE,
             ItemsType::TELEFOANE_MOBILE,
             "Samsung", "Galaxy S9+", 2017,
             true);
 
 
+        $images = [
+            'images/congelator arctic/1.jpg',
+            'images/congelator arctic/2.jpg',
+            'images/congelator arctic/3.jpg',
+        ];
         sleep(2);
         //congelator
         $this->addElectronicItem('Congelator 5 sertare arctic',
             "Vând congelator 5 sertare arctic stare foarte bună de funcționare curat și complet",
             3600, false, Category::ELECTONICE_ELECTROCASNICE, "Constanta",
+            $images,
             SubCategory::ELECTROCASNICE,
             ItemsType::APARATE_FRIGORIFICE,
             "Artic", "", 0,
             false);
 
+        $images = [
+            'images/nikon/1.jpg',
+            'images/nikon/2.jpg',
+            'images/nikon/3.jpg',
+            'images/nikon/4.jpg',
+            'images/nikon/5.jpg',
+            'images/nikon/6.jpg',
+            'images/nikon/7.jpg',
+        ];
         sleep(1);
 
         $this->addElectronicItem('Nikon D7100 + 2 obiective',
@@ -112,11 +136,17 @@ Pret 3.200 lei
 Aparatul se poate vedea in Miercurea Ciuc. Accept orice test.Predare personala in Miercurea Ciuc.
 Trimit si in tara cu verificare colet.",
             3200, false, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti",
+            $images,
             SubCategory::TV_AUDIO_FOTO_VIDEO,
             ItemsType::APARATE_FOTO_SI_ACCESORII,
             "Nikon", "", 2017,
             true);
 
+        $images = [
+            'images/zte/1.jpg',
+            'images/zte/2.jpg',
+            'images/zte/3.jpg',
+        ];
         sleep(3);
         //dezmembrare wot is this
         $this->addElectronicItem('Dezmembrez Zte Grand X In',
@@ -133,39 +163,61 @@ Montaj 30 lei
 Transport 25 lei
 Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
             50, false, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
+            $images,
             SubCategory::TELEFOANE,
             ItemsType::ACCESORII_GSM,
             "", "", 0,
             true);
+
+        $images = [
+            'images/husa/1.jpg',
+            'images/husa/2.jpg',
+            'images/husa/3.jpg',
+            'images/husa/4.jpg',
+            'images/husa/5.jpg',
+            'images/husa/6.jpg',
+            'images/husa/7.jpg',
+            'images/husa/8.jpg',
+        ];
         sleep(1);
 //husa
         $this->addElectronicItem('Set husa slim transparenta TPU + folie sticla Hoco iPhone X',
             'COD PRODUS: IPHONE X - HOCO SET HUSA + FOLIE
             Marca HOCO este un brand international de renume, care creaza huse de top de foarte buna calitate. Aceasta husa este realizata din material TPU premium importat din Germania si produs in Hong Kong',
             89, false, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
+            $images,
             SubCategory::TELEFOANE,
             ItemsType::ACCESORII_GSM,
             "", "", 0,
             false);
 
+        $images = [
+            'images/dacia1310/1.jpg',
+            'images/dacia1310/2.jpg',
+        ];
         sleep(2);
-        $this->addVehicleItem('Dacia 130', "Merge ca atunci cand am luat-o",
-            1500, false, Category::AUTO_MOTO_NAUTICA, "Craiova",
+        //dacia 1310
+        $this->addVehicleItem('Dacia 1310 cu I.T.P. valabil pentru tichet rabla 2019', "Merge ca atunci cand am luat-o",
+            1800, false, Category::AUTO_MOTO_NAUTICA, "Craiova",
+            $images,
             SubCategory::AUTOTURISME,
             ItemsType::AUTOTURISM,
-            "Dacia", "1310", 1995,
+            "Dacia", "1310", 1990,
             1.2, 65, "Manuala",
             "Berlina", "Benzina", 350000,
             "Fata", "Euro", "Galben", "Romania",
             "HGJLO348HHHKJF195", true, false, true,
             false, false);
 
+        $images = [
+            'images/rama/1.jpg',
+        ];
         sleep(2);
-
         //rama allview
         $this->addElectronicItem('Rama mijloc allview x4 soul mini',
             "Rama mijloc allview x4 soul mini Montaj 30 lei Transport in tara 20lei",
             30, false, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
+            $images,
             SubCategory::TELEFOANE,
             ItemsType::ACCESORII_GSM,
             "Allview", "X4 Soul Mini", 0,
@@ -173,7 +225,7 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
     }
 
 
-    private function addItem($title, $description, $price, $currency, $category, $location)
+    private function addItem($title, $description, $price, $currency, $category, $location, $images)
     {
         $item = new Item();
 
@@ -186,25 +238,30 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
         $item->status = Item::STATUS_ACTIVE;
         $user = User::orderByRaw("RAND()")->first();
         $item->owner = $user->id;
+
         $item->save();
+
+        if (isset($images))
+            foreach ($images as $image) {
+                ItemsImage::create([
+                    'item_id' => $item->item_id,
+                    'filename' => $image
+                ]);
+            }
+
 
         return $item->item_id;
     }
 
 
-
-//$this->addVehicle($item->id, $sub_category, $type, $manufacturer, $model, $manufacturer_year, $engine, $power, $gearbox,
-//$body, $fuel_type, $mileage, $drive, $emission_class, $color, $origin, $VIN,
-//$used, $pollution_tax, $damaged, $first_owner, $right_hand_drive);
-
-    private function addVehicleItem($title, $description, $price, $currency, $category, $location, $sub_category, $type, $manufacturer, $model, $manufacturer_year, $engine, $power, $gearbox,
+    private function addVehicleItem($title, $description, $price, $currency, $category, $location, $images, $sub_category, $type, $manufacturer, $model, $manufacturer_year, $engine, $power, $gearbox,
                                     $body, $fuel_type, $mileage, $drive, $emission_class, $color, $origin, $VIN,
                                     $used, $pollution_tax, $damaged, $first_owner, $right_hand_drive)
     {
 
         $vehicle = new Vehicle();
 
-        $vehicle->item_id = $this->addItem($title, $description, $price, $currency, $category, $location);
+        $vehicle->item_id = $this->addItem($title, $description, $price, $currency, $category, $location, $images);
         $vehicle->sub_category = $sub_category;
         $vehicle->item_type = $type;
 
@@ -233,11 +290,11 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
         $vehicle->save();
     }
 
-    private function addElectronicItem($title, $description, $price, $currency, $category, $location, $sub_category, $type, $manufacturer, $model, $manufacturer_year, $used)
+    private function addElectronicItem($title, $description, $price, $currency, $category, $location, $images, $sub_category, $type, $manufacturer, $model, $manufacturer_year, $used)
     {
         $electronic = new Electronic();
 
-        $electronic->item_id = $this->addItem($title, $description, $price, $currency, $category, $location);
+        $electronic->item_id = $this->addItem($title, $description, $price, $currency, $category, $location, $images);
         $electronic->sub_category = $sub_category;
         $electronic->item_type = $type;
         $electronic->manufacturer = $manufacturer;

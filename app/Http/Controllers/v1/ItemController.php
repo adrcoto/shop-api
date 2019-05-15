@@ -443,43 +443,15 @@ class ItemController extends Controller
     public function test(Request $request)
     {
         try {
-        $message = "";
-            $images =  ItemsImage::where("item_id", $request->item_id)->get();
-            $initialImagesCounter = $images->count();
 
-            if ($request->has('images')) {
-                $newImagesCounter = count($request->images);
+            $url = Storage::url('cayenne.png');
 
-                if ($initialImagesCounter < $newImagesCounter)
-                    $message = "Need to add new images";
-
-                else if ($initialImagesCounter > $newImagesCounter)
-                    $message = "He deleted one or more images";
-
-                else
-                    $message = "I need to check if he modified them";
-            }
-
-            /**
-             * Takes images for an item
-             * deletes images from db
-             * deletes images from storage
-             */
-
-//              foreach ($images as $image) {
-//                  $deleted = Storage::disk('public')->delete($image->filename);
-//                  $image->delete();
-//              }
-
-
-            return $this->returnSuccess($message);
+            return $this->returnSuccess($url);
         } catch
         (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
     }
-
-
     /**
      * Sort items by updated_at in desc order
      * @param $arr
