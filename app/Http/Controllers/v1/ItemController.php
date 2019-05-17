@@ -40,30 +40,30 @@ class ItemController extends Controller
              */
 
             $items = new Collection();
-
             if ($request->has('q')) {
                 $vehicles = DB::table('items')
                     ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
                     ->where('items.title', 'LIKE', '%' . $request->q . '%')
-                    ->orderBy('updated_at', 'desc')
+                    ->orderBy('created_at', 'desc')
                     ->get();
 
                 //electronics
                 $electronics = DB::table('items')
                     ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
                     ->where('items.title', 'LIKE', '%' . $request->q . '%')
-                    ->orderBy('updated_at', 'desc')
+                    ->orderBy('created_at', 'desc')
                     ->get();
+
             } else {
                 $vehicles = DB::table('items')
                     ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
-                    ->orderBy('updated_at', 'desc')
+                    ->orderBy('created_at', 'desc')
                     ->get();
 
                 //electronics
                 $electronics = DB::table('items')
                     ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
-                    ->orderBy('updated_at', 'desc')
+                    ->orderBy('created_at', 'desc')
                     ->get();
             }
 
@@ -469,12 +469,12 @@ class ItemController extends Controller
 
     private function partition(&$arr, $leftIndex, $rightIndex)
     {
-        $pivot = $arr[($leftIndex + $rightIndex) / 2]->updated_at;
+        $pivot = $arr[($leftIndex + $rightIndex) / 2]->created_at;
 
         while ($leftIndex <= $rightIndex) {
-            while ($arr[$leftIndex]->updated_at > $pivot)
+            while ($arr[$leftIndex]->created_at > $pivot)
                 $leftIndex++;
-            while ($arr[$rightIndex]->updated_at < $pivot)
+            while ($arr[$rightIndex]->created_at < $pivot)
                 $rightIndex--;
             if ($leftIndex <= $rightIndex) {
                 $tmp = $arr[$leftIndex];
