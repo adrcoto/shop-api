@@ -39,8 +39,11 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
     $router->post('/verify', ['uses' => 'UserController@verify']);
     $router->post('/forgot-password', ['uses' => 'UserController@forgotPassword']);
     $router->post('/change-password', ['uses' => 'UserController@changePassword']);
-    $router->get('/search', ['uses' => 'ItemController@search']);
     $router->post('/test', ['uses' => 'ItemController@test']);
+    $router->get('/search', ['uses' => 'ItemController@search']);
+    $router->get('/categories', ['uses' => 'CategoryController@categories']);
+    $router->get('/subcategories/{id}', ['uses' => 'SubcategoryController@subcategories']);
+    $router->get('/types/{id}', ['uses' => 'ItemTypeController@types']);
 });
 
 /** Routes with auth */
