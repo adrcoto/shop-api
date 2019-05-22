@@ -15,7 +15,6 @@ use App\SubCategory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
 
@@ -90,7 +89,7 @@ class ItemController extends Controller
 
     /**
      * Create an item
-     * @param Request $request*
+     * @param Request $request *
      * @return \Illuminate\Http\JsonResponse
      */
     public function create(Request $request)
@@ -396,9 +395,6 @@ class ItemController extends Controller
             }
 
 
-
-
-
             $item->save();
 
             return $this->returnSuccess();
@@ -444,14 +440,14 @@ class ItemController extends Controller
     {
         try {
 
-            $url = Storage::url('cayenne.png');
 
-            return $this->returnSuccess($url);
+            return $this->returnSuccess();
         } catch
         (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
     }
+
     /**
      * Sort items by updated_at in desc order
      * @param $arr
