@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
  * @property integer item_id
  * @property string title
+ * @property string slug
  * @property string description
  * @property float price
  * @property boolean currency

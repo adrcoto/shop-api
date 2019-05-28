@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Electronic Item
  *
- * @property integer id
  * @property integer item_id
  * @property integer sub_category
  * @property integer item_type
@@ -18,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property boolean used
  * @package App
  */
-class Electronic extends Model
+class Electronic extends Item
 {
 
 

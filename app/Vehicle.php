@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Vehicle Item
- * @property integer id
  * @property integer item_id
  * @property integer sub_category
  * @property integer item_type
@@ -35,7 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property boolean right_hand_drive
  * @package App
  */
-class Vehicle extends Model
+class Vehicle extends Item
 {
     /** @var int */
     const REGISTERED = 1;
