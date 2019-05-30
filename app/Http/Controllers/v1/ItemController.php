@@ -11,10 +11,13 @@ use App\Vehicle;
 use App\ItemsImage;
 use App\Category;
 use App\SubCategory;
+use App\User;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
 
@@ -38,55 +41,52 @@ class ItemController extends Controller
              * Sends searched items with images
              */
 
-//            $perPage = $request->perPage / 2;
-//
-//            $count = Item::count();
-//
-//            $items = new Collection();
-//            if ($request->has('q')) {
-//                $vehicles = DB::table('items')
-//                    ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
-//                    ->where('items.title', 'LIKE', '%' . $request->q . '%')
-//                    ->orderBy('created_at', 'desc')
-//                    ->paginate($perPage);
-//
-//                //electronics
-//                $electronics = DB::table('items')
-//                    ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
-//                    ->where('items.title', 'LIKE', '%' . $request->q . '%')
-//                    ->orderBy('created_at', 'desc')
-//                    ->paginate($perPage);
-//
-//            } else {
-//                $vehicles = DB::table('items')
-//                    ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
-//                    ->orderBy('created_at', 'desc')
-//                    ->paginate($perPage);
-//
-//                //electronics
-//                $electronics = DB::table('items')
-//                    ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
-//                    ->orderBy('created_at', 'desc')
-//                    ->paginate($perPage);
-//            }
-//
-//
-//
-//
-//
-//            foreach ($vehicles as $vehicle)
-//                $items->push($vehicle);
-//
-//            foreach ($electronics as $electronic)
-//                $items->push($electronic);
-//
-//            foreach ($items as $item)
-//                $item->images = DB::table('items_images')->where('item_id', '=', $item->item_id)->get();
-//
-//            if ($items->isEmpty())
-//                return $this->returnNotFound('Bate vantul pe aici');
-//            $this->quickSort($items, 0, count($items) - 1);
+            /*            $perPage = $request->perPage / 2;
 
+                        $count = Item::count();
+
+                        $items = new Collection();
+                        if ($request->has('q')) {
+                            $vehicles = DB::table('items')
+                                ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
+                                ->where('items.title', 'LIKE', '%' . $request->q . '%')
+                                ->orderBy('created_at', 'desc')
+                                ->paginate($perPage);
+
+                            //electronics
+                            $electronics = DB::table('items')
+                                ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
+                                ->where('items.title', 'LIKE', '%' . $request->q . '%')
+                                ->orderBy('created_at', 'desc')
+                                ->paginate($perPage);
+
+                        } else {
+                            $vehicles = DB::table('items')
+                                ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
+                                ->orderBy('created_at', 'desc')
+                                ->paginate($perPage);
+
+                            //electronics
+                            $electronics = DB::table('items')
+                                ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
+                                ->orderBy('created_at', 'desc')
+                                ->paginate($perPage);
+                        }
+
+
+
+                        foreach ($vehicles as $vehicle)
+                            $items->push($vehicle);
+
+                        foreach ($electronics as $electronic)
+                            $items->push($electronic);
+
+                        foreach ($items as $item)
+                            $item->images = DB::table('items_images')->where('item_id', '=', $item->item_id)->get();
+
+                        if ($items->isEmpty())
+                            return $this->returnNotFound('Bate vantul pe aici');
+                        $this->quickSort($items, 0, count($items) - 1);*/
 
             $perPage = $request->perPage;
 
@@ -95,8 +95,13 @@ class ItemController extends Controller
             if ($request->has('q'))
                 $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')->orderBy('created_at', 'desc')->paginate($perPage);
 
-            else
+            else {
                 $itemsToBuild = Item::orderBy('created_at', 'desc')->paginate($perPage);
+
+                if ($request->has('owner'))
+                    $itemsToBuild = Item::where('owner', $request->owner)->orderBy('created_at', 'desc')->paginate($perPage);
+            }
+
 
             $items = new Collection();
             $count = Item::count();
@@ -169,6 +174,89 @@ class ItemController extends Controller
         }
     }
 
+    public function getItem($id)
+    {
+        try {
+
+            $itemToBuild = Item::find($id);
+            $itemBuilt = new \stdClass();
+
+            if (!$itemToBuild)
+                return $this->returnBadRequest('Item not found');
+
+            $cat = $itemToBuild->category;
+
+            $itemBuilt->item_id = $itemToBuild->item_id;
+            $itemBuilt->title = $itemToBuild->title;
+            $itemBuilt->slug = $itemToBuild->slug;
+            $itemBuilt->description = $itemToBuild->description;
+            $itemBuilt->price = $itemToBuild->price;
+            $itemBuilt->currency = $itemToBuild->currency;
+            $itemBuilt->category = $itemToBuild->category;
+            $itemBuilt->location = $itemToBuild->location;
+            $itemBuilt->status = $itemToBuild->status;
+            $itemBuilt->owner = $itemToBuild->owner;
+            $itemBuilt->created_at = $itemToBuild->created_at;
+            $itemBuilt->updated_at = $itemToBuild->updated_at;
+
+            $itemBuilt->images = DB::table('items_images')->where('item_id', '=', $itemToBuild->item_id)->get();
+
+            if ($cat == Category::ELECTONICE_ELECTROCASNICE) {
+                $electronic = Electronic::find($itemToBuild->item_id);
+
+                $itemBuilt->sub_category = $electronic->sub_category;
+                $itemBuilt->item_type = $electronic->item_type;
+
+                $itemBuilt->manufacturer = $electronic->manufacturer;
+                $itemBuilt->model = $electronic->model;
+                $itemBuilt->manufacturer_year = $electronic->manufacturer_year;
+                $itemBuilt->used = $electronic->used;
+            } else {
+                $vehicle = Vehicle::find($itemToBuild->item_id);
+
+                $itemBuilt->sub_category = $vehicle->sub_category;
+                $itemBuilt->item_type = $vehicle->item_type;
+
+                $itemBuilt->manufacturer = $vehicle->manufacturer;
+                $itemBuilt->model = $vehicle->model;
+                $itemBuilt->manufacturer_year = $vehicle->manufacturer_year;
+                $itemBuilt->engine = $vehicle->engine;
+                $itemBuilt->power = $vehicle->power;
+                $itemBuilt->gearbox = $vehicle->gearbox;
+                $itemBuilt->body = $vehicle->body;
+                $itemBuilt->fuel_type = $vehicle->fuel_type;
+                $itemBuilt->mileage = $vehicle->mileage;
+
+                $itemBuilt->drive = $vehicle->drive;
+                $itemBuilt->emission_class = $vehicle->emission_class;
+                $itemBuilt->color = $vehicle->color;
+                $itemBuilt->origin = $vehicle->origin;
+                $itemBuilt->VIN = $vehicle->VIN;
+
+                $itemBuilt->used = $vehicle->used;
+                $itemBuilt->pollution_tax = $vehicle->pollution_tax;
+                $itemBuilt->damaged = $vehicle->damaged;
+                $itemBuilt->registered = $vehicle->registered;
+                $itemBuilt->first_owner = $vehicle->first_owner;
+                $itemBuilt->right_hand_drive = $vehicle->right_hand_drive;
+            }
+
+            $user = User::find($itemToBuild->owner);
+
+            return $this->returnSuccess(['item' => $itemBuilt, 'user' => $user]);
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
+    }
+
+    public function getUserItems($id)
+    {
+        try {
+
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
+    }
 
     /**
      * Create an item
@@ -190,7 +278,6 @@ class ItemController extends Controller
                 'type' => 'required|exists:items_types,id',
                 'location' => 'required',
             ];
-
 
             $validator = Validator::make($request->all(), $rules);
 
@@ -219,6 +306,7 @@ class ItemController extends Controller
             $item = new Item();
 
             $item->title = $request->title;
+            $item->slug = Str::slug($request->title, '-');
             $item->description = $request->description;
             $item->price = $request->price;
             $item->currency = $request->currency;
@@ -503,9 +591,14 @@ class ItemController extends Controller
             if ($user->role_id === Role::ROLE_USER && $user->id !== $item->owner)
                 return $this->returnError('You don\'t have permission to delete this item');
 
+            $images = ItemsImage::where('item_id', $id)->get();
+
+            foreach ($images as $image)
+                Storage::disk('public')->delete($image->filename);
+
             $item->delete();
 
-            return $this->returnSuccess();
+            return $this->returnSuccess($images);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
@@ -520,167 +613,11 @@ class ItemController extends Controller
     public function test(Request $request, Electronic $elec, Vehicle $veh)
     {
         try {
+            $phone = '07200292550755';
 
-            //   $ids = Item::orderBy('created_at', 'desc')->all();
+            $phone = substr($phone, 0, 10);
 
-//            $items = new Collection();
-//
-//            $itemsToBuild = Item::orderBy('created_at', 'desc')->paginate(5);
-//
-//            foreach ($itemsToBuild as $itemToBuild){
-//                $cat = $itemToBuild->category;
-//                if ($cat == Category::ELECTONICE_ELECTROCASNICE){
-//                    $electronic = Electronic::find($itemToBuild->item_id);
-//                    $itemBuilt = new Electronic();
-//
-//                    $itemBuilt->item_id = $itemToBuild->item_id;
-//                    $itemBuilt->title = $itemToBuild->title;
-//                    $itemBuilt->slug = $itemToBuild->slug;
-//                    $itemBuilt->description = $itemToBuild->desciption;
-//                    $itemBuilt->price = $itemToBuild->price;
-//                    $itemBuilt->currency = $itemToBuild->currency;
-//                    $itemBuilt->category = $itemToBuild->category;
-//                    $itemBuilt->location = $itemToBuild->location;
-//                    $itemBuilt->status = $itemToBuild->status;
-//                    $itemBuilt->owner = $itemToBuild->owner;
-//
-//                    $itemBuilt->sub_category = $electronic->sub_category;
-//                    $itemBuilt->item_type = $electronic->item_type;
-//
-//                    $itemBuilt->manufacturer = $electronic->manufacturer;
-//                    $itemBuilt->model = $electronic->model;
-//                    $itemBuilt->manufacturer_year = $electronic->manufacturer_year;
-//                    $itemBuilt->used = $electronic->used;
-//
-//
-//                    $itemBuilt->created_at = $itemToBuild->created_at;
-//                    $itemBuilt->updated_at = $itemToBuild->updated_at;
-//
-//                    $items->push($itemBuilt);
-//                }
-//                else if ($cat == Category::AUTO_MOTO_NAUTICA) {
-//                    $vehicle = Vehicle::find($itemToBuild->item_id);
-//                    $itemBuilt = new Vehicle();
-//                    $itemBuilt->item_id = $itemToBuild->item_id;
-//                    $itemBuilt->title = $itemToBuild->title;
-//                    $itemBuilt->sub_category = $vehicle->sub_category;
-//                    $itemBuilt->item_type = $vehicle->item_type;
-//                    $items->push($itemBuilt);
-//                }
-//
-//
-//            }
-//            foreach ($items as $item)
-//                $item->images = DB::table('items_images')->where('item_id', '=', $item->item_id)->get();
-
-            $months = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'];
-
-            $items = new Collection();
-
-            $itemsToBuild = Item::orderBy('created_at', 'desc')->paginate(5);
-
-            $createdYear = null;
-            $createdMonth = null;
-            $createdDay = null;
-            $createdHour = null;
-            $createdMin = null;
-
-            $actualYear = date('y');
-            $actualDay = date('d');
-
-            foreach ($itemsToBuild as $itemToBuild) {
-                $itemBuilt = new \stdClass();
-                $cat = $itemToBuild->category;
-
-                $itemBuilt->item_id = $itemToBuild->item_id;
-                $itemBuilt->title = $itemToBuild->title;
-                $itemBuilt->slug = $itemToBuild->slug;
-                $itemBuilt->description = $itemToBuild->description;
-                $itemBuilt->price = $itemToBuild->price;
-                $itemBuilt->currency = $itemToBuild->currency;
-                $itemBuilt->category = $itemToBuild->category;
-                $itemBuilt->location = $itemToBuild->location;
-                $itemBuilt->status = $itemToBuild->status;
-                $itemBuilt->owner = $itemToBuild->owner;
-                $itemBuilt->created_at = $itemToBuild->created_at;
-                $itemBuilt->updated_at = $itemToBuild->updated_at;
-
-
-                $createdYear = $itemToBuild->created_at->year;
-                $createdMonth = $itemToBuild->created_at->month;
-                $createdDay = $itemToBuild->created_at->day;
-                $createdHour = $itemToBuild->created_at->hour;
-                $createdMin = $itemToBuild->created_at->minute;
-
-
-                if ($actualDay - $createdDay == 1)
-                    $date = "Ieri " . $createdHour . ":" . $createdMin;
-                else if ($createdDay - $actualDay == 0)
-                    $date = "Azi " . $createdHour . ":" . $createdMin;
-                else
-                    $date = $createdDay . " " . $months[$createdMonth - 1];
-
-                if ($createdYear !== $actualYear)
-                    $date = $createdDay . " " . $months[$createdMonth - 1] . " " . $createdYear;
-
-
-
-                $itemBuilt->s = $date;
-
-
-                $itemBuilt->createdYear = $createdYear;
-                $itemBuilt->createdMonth = $createdMonth;
-                $itemBuilt->createdDay = $createdDay;
-                $itemBuilt->createdHour = $createdHour;
-                $itemBuilt->createdMin = $createdMin;
-
-
-                $itemBuilt->images = DB::table('items_images')->where('item_id', '=', $itemBuilt->item_id)->get();
-
-                if ($cat == Category::ELECTONICE_ELECTROCASNICE) {
-                    $electronic = Electronic::find($itemToBuild->item_id);
-
-                    $itemBuilt->sub_category = $electronic->sub_category;
-                    $itemBuilt->item_type = $electronic->item_type;
-
-                    $itemBuilt->manufacturer = $electronic->manufacturer;
-                    $itemBuilt->model = $electronic->model;
-                    $itemBuilt->manufacturer_year = $electronic->manufacturer_year;
-                    $itemBuilt->used = $electronic->used;
-                } else {
-                    $vehicle = Vehicle::find($itemToBuild->item_id);
-
-                    $itemBuilt->sub_category = $vehicle->sub_category;
-                    $itemBuilt->item_type = $vehicle->item_type;
-
-                    $itemBuilt->manufacturer = $vehicle->manufacturer;
-                    $itemBuilt->model = $vehicle->model;
-                    $itemBuilt->manufacturer_year = $vehicle->manufacturer_year;
-                    $itemBuilt->engine = $vehicle->engine;
-                    $itemBuilt->power = $vehicle->power;
-                    $itemBuilt->gearbox = $vehicle->gearbox;
-                    $itemBuilt->body = $vehicle->body;
-                    $itemBuilt->fuel_type = $vehicle->fuel_type;
-                    $itemBuilt->mileage = $vehicle->mileage;
-
-                    $itemBuilt->drive = $vehicle->drive;
-                    $itemBuilt->emission_class = $vehicle->emission_class;
-                    $itemBuilt->color = $vehicle->color;
-                    $itemBuilt->origin = $vehicle->origin;
-                    $itemBuilt->VIN = $vehicle->VIN;
-
-                    $itemBuilt->used = $vehicle->used;
-                    $itemBuilt->pollution_tax = $vehicle->pollution_tax;
-                    $itemBuilt->damaged = $vehicle->damaged;
-                    $itemBuilt->registered = $vehicle->registered;
-                    $itemBuilt->first_owner = $vehicle->first_owner;
-                    $itemBuilt->right_hand_drive = $vehicle->right_hand_drive;
-
-                }
-                $items->push($itemBuilt);
-            }
-
-            return $this->returnSuccess($items);
+            return $this->returnSuccess($phone);
         } catch
         (\Exception $e) {
             return $this->returnError($e->getMessage());

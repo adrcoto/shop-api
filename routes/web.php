@@ -21,8 +21,6 @@ $router->get('/key', function() {
 });
 
 
-
-
 /** CORS */
 $router->options(
     '/{any:.*}', [
@@ -40,6 +38,7 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
     $router->post('/forgot-password', ['uses' => 'UserController@forgotPassword']);
     $router->post('/change-password', ['uses' => 'UserController@changePassword']);
     $router->post('/test', ['uses' => 'ItemController@test']);
+    $router->get('/item/{id}', ['uses' => 'ItemController@getItem']);
     $router->get('/search', ['uses' => 'ItemController@search']);
     $router->get('/categories', ['uses' => 'CategoryController@categories']);
     $router->get('/subcategories/{id}', ['uses' => 'SubcategoryController@subcategories']);
@@ -65,9 +64,14 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
 
     //items
     $router->group(['prefix' => 'user'], function () use ($router) {
-        $router->post('/test', ['uses' => 'ItemController@test']);
         $router->post('/', ['uses' => 'ItemController@create']);
         $router->patch('/{id}', ['uses' => 'ItemController@update']);
         $router->delete('/{id}', ['uses' => 'ItemController@delete']);
+    });
+
+    $router->group(['prefix' => 'favorites'], function () use ($router) {
+        $router->get('/', ['uses' => 'FavoriteController@get']);
+        $router->post('/', ['uses' => 'FavoriteController@add']);
+        $router->delete('/{id}', ['uses' => 'FavoriteController@remove']);
     });
 });

@@ -14,6 +14,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  *
  * @property string name
  * @property string email
+ * @property string phone
  * @property string password
  * @property integer status
  * @property integer role_id
@@ -37,6 +38,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'role_id',
         'status',
         'forgot_code'
@@ -55,7 +57,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'id',
         'name',
         'email',
-        'role_id'
+        'phone'
     ];
 
     /**
