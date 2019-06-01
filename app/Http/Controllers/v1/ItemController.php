@@ -116,6 +116,8 @@ class ItemController extends Controller
                 $itemBuilt->description = $itemToBuild->description;
                 $itemBuilt->price = $itemToBuild->price;
                 $itemBuilt->currency = $itemToBuild->currency;
+                $itemBuilt->negotiable = $itemToBuild->negotiable;
+                $itemBuilt->change = $itemToBuild->change;
                 $itemBuilt->category = $itemToBuild->category;
                 $itemBuilt->location = $itemToBuild->location;
                 $itemBuilt->status = $itemToBuild->status;
@@ -177,7 +179,6 @@ class ItemController extends Controller
     public function getItem($id)
     {
         try {
-
             $itemToBuild = Item::find($id);
             $itemBuilt = new \stdClass();
 
@@ -192,6 +193,8 @@ class ItemController extends Controller
             $itemBuilt->description = $itemToBuild->description;
             $itemBuilt->price = $itemToBuild->price;
             $itemBuilt->currency = $itemToBuild->currency;
+            $itemBuilt->negotiable = $itemToBuild->negotiable;
+            $itemBuilt->change = $itemToBuild->change;
             $itemBuilt->category = $itemToBuild->category;
             $itemBuilt->location = $itemToBuild->location;
             $itemBuilt->status = $itemToBuild->status;
@@ -243,16 +246,11 @@ class ItemController extends Controller
 
             $user = User::find($itemToBuild->owner);
 
+            $itemBuilt->sub_category_name = SubCategory::find($itemBuilt->sub_category)->name;
+            $itemBuilt->item_type_name = ItemsType::find($itemBuilt->item_type)->name;
+
+
             return $this->returnSuccess(['item' => $itemBuilt, 'user' => $user]);
-        } catch (\Exception $e) {
-            return $this->returnError($e->getMessage());
-        }
-    }
-
-    public function getUserItems($id)
-    {
-        try {
-
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
@@ -310,10 +308,13 @@ class ItemController extends Controller
             $item->description = $request->description;
             $item->price = $request->price;
             $item->currency = $request->currency;
+            $item->negotiable = $request->negotiable;
+            $item->change = $request->change;
             $item->category = $category;
             $item->location = $request->location;
             $item->status = Item::STATUS_ACTIVE;
             $item->owner = $user->id;
+
 
             $item->save();
 
@@ -460,8 +461,10 @@ class ItemController extends Controller
             if ($user->role_id === Role::ROLE_USER && $user->id !== $item->owner)
                 return $this->returnError('You don\'t have permission to update this task');
 
-            if ($request->has('title'))
+            if ($request->has('title')) {
                 $item->title = $request->title;
+                $item->slug = Str::slug($request->title, '-');
+            }
 
             if ($request->has('description'))
                 $item->description = $request->description;
@@ -471,6 +474,12 @@ class ItemController extends Controller
 
             if ($request->has('currency'))
                 $item->currency = $request->currency;
+
+            if ($request->has('negotiable'))
+                $item->negotiable = $request->negotiable;
+
+            if ($request->has('change'))
+                $item->change = $request->change;
 
             if ($request->has('location'))
                 $item->location = $request->location;
@@ -565,6 +574,24 @@ class ItemController extends Controller
                     break;
             }
 
+            if ($request->has('images'))
+                foreach ($request->images as $image) {
+                    $filename = $image->store('images', 'public');
+                    ItemsImage::create([
+                        'item_id' => $item->item_id,
+                        'filename' => $filename
+                    ]);
+                }
+
+            if ($request->has('imageFilenames'))
+                foreach ($request->imageFilenames as $image)
+                    Storage::disk('public')->delete($image);
+
+
+            if ($request->has('imageIds'))
+                foreach ($request->imageIds as $id)
+                    ItemsImage::find($id)->delete();
+
             $item->save();
             return $this->returnSuccess();
         } catch (\Exception $e) {
@@ -610,14 +637,24 @@ class ItemController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function test(Request $request, Electronic $elec, Vehicle $veh)
+    public function test(Request $request)
     {
         try {
-            $phone = '07200292550755';
+            if ($request->has('images'))
+                foreach ($request->images as $image) {
+                    $filename = $image->store('images', 'public');
+                    ItemsImage::create([
+                        'item_id' => 1,
+                        'filename' => $filename
+                    ]);
+                }
 
-            $phone = substr($phone, 0, 10);
+            if ($request->has('toDelete'))
+//                foreach($request->toDelete as $image)
+//                    Storage::disk('public')->delete($image);
 
-            return $this->returnSuccess($phone);
+
+                return $this->returnSuccess($request->toDelete);
         } catch
         (\Exception $e) {
             return $this->returnError($e->getMessage());

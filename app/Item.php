@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string description
  * @property float price
  * @property boolean currency
+ * @property boolean negotiable
+ * @property boolean change
  * @property integer category
  * @property string location
  * @property boolean status

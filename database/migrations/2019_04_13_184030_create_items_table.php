@@ -20,10 +20,13 @@ class CreateItemsTable extends Migration
             $table->text('description');
             $table->float('price');
             $table->tinyInteger('currency');
+            $table->tinyInteger('negotiable');
+            $table->tinyInteger('change');
             $table->integer('category')->unsigned();
             $table->string('location');
             $table->tinyInteger('status');
             $table->integer('owner')->unsigned();
+
             $table->timestamps();
         });
 
