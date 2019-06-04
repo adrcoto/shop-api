@@ -63,7 +63,7 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
     });
 
     //items
-    $router->group(['prefix' => 'user'], function () use ($router) {
+    $router->group(['prefix' => 'item'], function () use ($router) {
         $router->post('/', ['uses' => 'ItemController@create']);
         $router->patch('/{id}', ['uses' => 'ItemController@update']);
         $router->delete('/{id}', ['uses' => 'ItemController@delete']);

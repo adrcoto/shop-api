@@ -267,20 +267,39 @@ class ItemController extends Controller
             $user = $this->validateSession();
 
             $rules = [
-                'title' => 'required',
-                'description' => 'required',
-                'price' => 'required',
-                'currency' => 'required',
-                'category' => 'required|exists:categories,id',
-                'sub_category' => 'required|exists:sub_categories,id',
-                'type' => 'required|exists:items_types,id',
+                'title' => 'bail|required|max:60',
+                'description' => 'bail|required:max:5000',
+                'price' => 'bail|required|min:0',
+                'currency' => 'bail|required|min:0|max:1',
+                'category' => 'bail|required|exists:categories,id',
+                'sub_category' => 'bail|required|exists:sub_categories,id',
+                'type' => 'bail|required|exists:items_types,id',
                 'location' => 'required',
             ];
 
-            $validator = Validator::make($request->all(), $rules);
+            $message = [
+                'title.required' => 'Introduceți un titlu',
+                'title.max' => 'Titlul este prea lung',
+                'description.required' => 'Descrierea anunțului este obligatorie',
+                'description.max' => 'Descrierea este prea lungă',
+                'price.required' => 'Introduceți un preț',
+                'price.min' => 'Introduceți un preț valid',
+                'currency.required' => 'Alegeți una dintre cele doua monezi disponibile',
+                'currency.min' => 'Alegeți una dintre cele doua monezi disponibile',
+                'currency.max' => 'Alegeți una dintre cele doua monezi disponibile',
+                'category.required' => 'Alegeți o categorie',
+                'category.exists' => 'Categorie invalidă',
+                'sub.required' => 'Alegeți o categorie',
+                'sub_category.exists' => 'Categorie invalidă',
+                'type.required' => 'Alegeți un tip',
+                'type.exists' => 'Tip invalid',
+                'location.required' => 'Alegeți o locație',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $message);
 
             if (!$validator->passes())
-                return $this->returnBadRequest($validator->errors());
+                return $this->returnBadRequest($validator->errors()->first());
 
             $category = $request->category;
             $sub_category = $request->sub_category;
@@ -291,14 +310,14 @@ class ItemController extends Controller
 
             //checks if provided subcategory exists in selected category
             if (!$sub_categories->contains($sub_category))
-                return $this->returnBadRequest('Invalid Sub-category');
+                return $this->returnBadRequest('Categorie invalidă');
 
             //checks if provided item type exists in selected category->subcategory
             $item_types = ItemsType::where('sub_category', $request->sub_category)->get();
 
 
             if (!$item_types->contains($type))
-                return $this->returnBadRequest('Invalid item type');
+                return $this->returnBadRequest('Tip invalid');
 
 
             $item = new Item();
@@ -451,15 +470,47 @@ class ItemController extends Controller
     public function update(Request $request, $id)
     {
         try {
+
+            $rules = [
+                'title' => 'bail|max:60',
+                'description' => 'bail|max:5000',
+                'price' => 'bail|min:0',
+                'currency' => 'bail|min:0|max:1',
+                'category' => 'bail|required|exists:categories,id',
+                'sub_category' => 'bail|required|exists:sub_categories,id',
+                'type' => 'bail|required|exists:items_types,id',
+            ];
+
+            $message = [
+
+                'title.max' => 'Titlul este prea lung',
+                'description.max' => 'Descrierea este prea lungă',
+                'price.min' => 'Introduceți un preț valid',
+                'currency.min' => 'Alegeți una dintre cele doua monezi disponibile',
+                'currency.max' => 'Alegeți una dintre cele doua monezi disponibile',
+                'category.required' => 'Alegeți o categorie',
+                'category.exists' => 'Categorie invalidă',
+                'sub.required' => 'Alegeți o categorie',
+                'sub_category.exists' => 'Categorie invalidă',
+                'type.required' => 'Alegeți un tip',
+                'type.exists' => 'Tip invalid',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $message);
+
+            if (!$validator->passes())
+                return $this->returnBadRequest($validator->errors()->first());
+
+
             $user = $this->validateSession();
 
             $item = Item::find($id);
 
             if (!$item)
-                $this->returnBadRequest('Item not found');
+                $this->returnBadRequest('Anunțul nu a putut fi găsit');
 
             if ($user->role_id === Role::ROLE_USER && $user->id !== $item->owner)
-                return $this->returnError('You don\'t have permission to update this task');
+                return $this->returnError('Nu aveți drepturile necesare pentru a modifica acest anunț');
 
             if ($request->has('title')) {
                 $item->title = $request->title;
@@ -616,7 +667,7 @@ class ItemController extends Controller
                 return $this->returnBadRequest('Item not found');
 
             if ($user->role_id === Role::ROLE_USER && $user->id !== $item->owner)
-                return $this->returnError('You don\'t have permission to delete this item');
+                return $this->returnError('Nu aveți drepturile necesare pentru a șterge acest anunț');
 
             $images = ItemsImage::where('item_id', $id)->get();
 
