@@ -3,10 +3,16 @@
 
 namespace App\Http\Controllers\v1;
 
+use App\Category;
+use App\Electronic;
 use App\Favorite;
 
 use App\Http\Controllers\Controller;
+use App\Util;
+use App\Vehicle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class FavoriteController
@@ -20,9 +26,11 @@ class FavoriteController extends Controller
         try {
             $user = $this->validateSession();
 
-            $items = Favorite::where('user', $user->id)->get();
+            $requestedItems = DB::table('items')
+                ->join('favorites', 'items.item_id', '=', 'favorites.item')
+                ->where('favorites.user', '=', $user->id)->orderBy('favorites.created_at')->get();
 
-            return $this->returnSuccess($items);
+            return $this->returnSuccess(Util::buildItems($requestedItems));
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
@@ -36,7 +44,7 @@ class FavoriteController extends Controller
             $alreadyFavorite = Favorite::where('item', $request->item)->first();
 
             if ($alreadyFavorite)
-                return $this->returnError('Item is already favorite');
+                return $this->returnError('Anunțul este deja in lista de anuțuri favorite');
 
             $favorite = new Favorite();
 

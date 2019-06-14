@@ -299,7 +299,7 @@ class UserController extends Controller
                 $user->location = $request->location;
 
             $user->save();
-            return $this->returnSuccess($request->all());
+            return $this->returnSuccess($user);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }

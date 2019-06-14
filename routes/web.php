@@ -39,6 +39,7 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
     $router->post('/change-password', ['uses' => 'UserController@changePassword']);
     $router->post('/test', ['uses' => 'ItemController@test']);
     $router->get('/item/{id}', ['uses' => 'ItemController@getItem']);
+    $router->get('/items/{id}', ['uses' => 'ItemController@getUsersItems']);
     $router->get('/search', ['uses' => 'ItemController@search']);
     $router->get('/categories', ['uses' => 'CategoryController@categories']);
     $router->get('/subcategories/{id}', ['uses' => 'SubcategoryController@subcategories']);
@@ -47,6 +48,7 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
 
 /** Routes with auth */
 $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware' => 'cors|jwt'], function () use ($router) {
+
     $router->group(['prefix' => 'user'], function () use ($router) {
         $router->get('/', ['uses' => 'UserController@get']);
         $router->patch('/', ['uses' => 'UserController@update']);
@@ -64,6 +66,7 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
 
     //items
     $router->group(['prefix' => 'item'], function () use ($router) {
+        $router->get('/', ['uses' => 'ItemController@get']);
         $router->post('/', ['uses' => 'ItemController@create']);
         $router->patch('/{id}', ['uses' => 'ItemController@update']);
         $router->delete('/{id}', ['uses' => 'ItemController@delete']);
