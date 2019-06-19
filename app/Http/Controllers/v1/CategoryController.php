@@ -21,7 +21,7 @@ class CategoryController extends Controller
     public function categories()
     {
         try {
-            $categories = Category::all();
+            $categories = Category::orderBy('name')->get();
             return $this->returnSuccess($categories);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());

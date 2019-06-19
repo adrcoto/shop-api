@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use App\Services\BaseService;
+
 /**
  * Class UserController
  *
@@ -270,11 +274,13 @@ class UserController extends Controller
         try {
             $rules = [
                 'name' => 'bail|max:26',
-                'password' => 'min:6'
+                'password' => 'bail|min:6',
+                'phone' => 'min:6',
             ];
             $message = [
                 'name.max' => 'Numele este prea lung',
-                'password' => 'Parola trebuie să conțină minim 6 caracter'
+                'password' => 'Parola trebuie să conțină minim 6 caracter',
+                'phone.min' => 'Introduceți un număr de telefon valid'
             ];
 
             $validator = Validator::make($request->all(), $rules, $message);
@@ -298,10 +304,73 @@ class UserController extends Controller
             if ($request->has('location'))
                 $user->location = $request->location;
 
+
             $user->save();
-            return $this->returnSuccess($user);
+            return $this->returnSuccess($request->all());
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
+        }
+    }
+
+    public function updateAvatar(Request $request)
+    {
+
+        try  {
+
+            $rules = [
+                'avatar' => 'required|image',
+            ];
+            $messages = [
+                'avatar.required' => 'Alegeți o fotografie',
+                'avatar.image' => 'Fotografia nu este suportată'
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if (!$validator->passes()) {
+                return $this->returnError($validator->errors()->first());
+            }
+
+            $user = $this->validateSession();
+
+
+
+            if ($request->has('avatar')) {
+
+         /*        if ($user->avatar == null) {
+                     $user->avatar = $request->avatar->store('avatars', 'public');
+                 } else {
+                     Storage::disk('public')->delete($user->avatar);
+
+                     $user->avatar = $request->avatar->store('avatars', 'public');
+                 }*/
+
+                $baseService = new BaseService();
+
+                $picture = $request->file('avatar');
+                $pictureExtension = $picture->getClientOriginalExtension();
+                $generatedPictureName = str_replace(' ', '_', $user->name) . '_' . time() . '.' . $pictureExtension;
+                $path = 'storage/users/';
+                File::makeDirectory($path, 0777, true, true);
+
+
+
+                if ($user->avatar == null) {
+                    $pictureData = $baseService->processImage($path, $picture, $generatedPictureName);
+
+                    $user->avatar = json_decode($pictureData);
+                } else {
+                    File::delete($user->avatar);
+                    $pictureData = $baseService->processImage($path, $picture, $generatedPictureName);
+                    $user->avatar = json_decode($pictureData);
+                }
+
+
+                $user->save();
+            }
+            return $this->returnSuccess();
+        } catch (\Exception $e) {
+            return $this->returnBadRequest($e->getMessage());
         }
     }
 }

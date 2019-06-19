@@ -6,6 +6,7 @@ use App\User;
 use GenTux\Jwt\Drivers\FirebaseDriver;
 use GenTux\Jwt\GetsJwtToken;
 use GenTux\Jwt\JwtToken;
+use App\Services\BaseService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Routing\Controller as BaseController;

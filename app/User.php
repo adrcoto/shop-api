@@ -17,6 +17,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @property string phone
  * @property string password
  * @property integer status
+ * @property string avatar
  * @property integer role_id
  * @package App
  */
@@ -40,6 +41,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'email',
         'phone',
         'role_id',
+        'avatar',
         'status',
         'forgot_code'
     ];
@@ -58,7 +60,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'name',
         'email',
         'location',
-        'phone'
+        'phone',
+        'avatar',
     ];
 
     /**
@@ -88,8 +91,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * User assigned tasks
-     *
+     * User Items
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function items()

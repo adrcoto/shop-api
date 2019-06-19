@@ -32,6 +32,8 @@ class ItemsSeeder extends Seeder
             "Tot ce-i trebuie, full option",
             75000,
             true,
+            1,
+            1,
             Category::AUTO_MOTO_NAUTICA,
             "Craiova",
             $images,
@@ -67,7 +69,7 @@ class ItemsSeeder extends Seeder
         sleep(2);
         //telefon
         $this->addElectronicItem('Samsung Galaxy S10', "E furat din UK",
-            3600, false, Category::ELECTONICE_ELECTROCASNICE, "Bals",
+            3600, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Bals",
             $images,
             SubCategory::TELEFOANE,
             ItemsType::TELEFOANE_MOBILE,
@@ -81,7 +83,7 @@ class ItemsSeeder extends Seeder
         sleep(1);
         //telefon
         $this->addElectronicItem('Samsung Galaxy S9+', "E furat din UK",
-            2500, false, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti",
+            2500, false, 0, 1,Category::ELECTONICE_ELECTROCASNICE, "Bucuresti",
             $images,
             SubCategory::TELEFOANE,
             ItemsType::TELEFOANE_MOBILE,
@@ -96,7 +98,7 @@ class ItemsSeeder extends Seeder
         //congelator
         $this->addElectronicItem('Congelator 5 sertare arctic',
             "Vând congelator 5 sertare arctic stare foarte bună de funcționare curat și complet",
-            3600, false, Category::ELECTONICE_ELECTROCASNICE, "Constanta",
+            3600, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Constanta",
             $images,
             SubCategory::ELECTROCASNICE,
             ItemsType::APARATE_FRIGORIFICE,
@@ -123,7 +125,7 @@ Nu se vinde separat
 Pret 3.200 lei
 Aparatul se poate vedea in Miercurea Ciuc. Accept orice test.Predare personala in Miercurea Ciuc.
 Trimit si in tara cu verificare colet.",
-            3200, false, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti",
+            3200, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti",
             $images,
             SubCategory::TV_AUDIO_FOTO_VIDEO,
             ItemsType::APARATE_FOTO_SI_ACCESORII,
@@ -147,7 +149,7 @@ Garantie
 Montaj 30 lei
 Transport 25 lei
 Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
-            50, false, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
+            50, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
             $images,
             SubCategory::TELEFOANE,
             ItemsType::ACCESORII_GSM,
@@ -168,7 +170,7 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
         $this->addElectronicItem('Set husa slim transparenta TPU + folie sticla Hoco iPhone X',
             'COD PRODUS: IPHONE X - HOCO SET HUSA + FOLIE
            Marca HOCO este un brand international de renume, care creaza huse de top de foarte buna calitate. Aceasta husa este realizata din material TPU premium importat din Germania si produs in Hong Kong',
-            89, false, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
+            89, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
             $images,
             SubCategory::TELEFOANE,
             ItemsType::ACCESORII_GSM,
@@ -181,7 +183,7 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
         sleep(2);
         //dacia 1310
         $this->addVehicleItem('Dacia 1310 cu I.T.P. valabil pentru tichet rabla 2019', "Merge ca atunci cand am luat-o",
-            1800, false, Category::AUTO_MOTO_NAUTICA, "Craiova",
+            1800, false, 1, 1,Category::AUTO_MOTO_NAUTICA, "Craiova",
             $images,
             SubCategory::AUTOTURISME,
             ItemsType::AUTOTURISM,
@@ -198,7 +200,7 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
         //rama allview
         $this->addElectronicItem('Rama mijloc allview x4 soul mini',
             "Rama mijloc allview x4 soul mini Montaj 30 lei Transport in tara 20lei",
-            30, false, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
+            30, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
             $images,
             SubCategory::TELEFOANE,
             ItemsType::ACCESORII_GSM,
@@ -255,7 +257,7 @@ Lumini de zi (LED)
 Oglinzi retrovizoare exterioare electrocromatice
 Pilot automat
 Senzori parcare fata-spate",
-            8600, true, Category::AUTO_MOTO_NAUTICA, "Sintesti, Bucuresti-Ilfov",
+            8600, true,  1, 1,Category::AUTO_MOTO_NAUTICA, "Sintesti, Bucuresti-Ilfov",
             $images,
             SubCategory::AUTOTURISME,
             ItemsType::AUTOTURISM,
@@ -314,7 +316,7 @@ Senzori parcare fata-spate",
  Număr de locuri: 3 - 6
  Număr uşi: 4 sau 5
  Airbag: Airbag frontal, lateral şi altele",
-            15500, true, Category::AUTO_MOTO_NAUTICA, "Sibiu, Sibiu",
+            15500, true, 1, 0,Category::AUTO_MOTO_NAUTICA, "Sibiu, Sibiu",
             $images,
             SubCategory::AUTOTURISME,
             ItemsType::AUTOTURISM,
@@ -373,7 +375,7 @@ Mouse gaming RGB ADATA XPG INFAREX M10 + Mousepad gaming RGB INFAREX R10 - Pret 
 Se accepta orice fel de teste/ proba pe raza judetului Brasov.
 
 ",
-            4000, false, Category::ELECTONICE_ELECTROCASNICE, "Bals",
+            4000, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bals",
             $images,
             SubCategory::LAPTOP_PC_PERIFERICE,
             ItemsType::SISTEME_PC,
@@ -432,7 +434,7 @@ Se accepta orice fel de teste/ proba pe raza judetului Brasov.
        -Megadimension Neptunia VII
        -One Piece: Burning Blood
        -Rocket League",
-            1250, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Piatra Neamt, Neamt",
+            1250, false, 1, 1, Category::ELECTONICE_ELECTROCASNICE, "Piatra Neamt, Neamt",
             ['images/ps4/1.jpg',
                 "images/ps4/2.jpg",
             ],
@@ -471,7 +473,7 @@ Se accepta orice fel de teste/ proba pe raza judetului Brasov.
         ORAR :
         L - V = 09.00 – 18.00.
         S = 09.00 – 14.00.",
-            550, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Timisoara, Timis",
+            550, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Timisoara, Timis",
             ['images/spalat/1.jpg',
                 "images/spalat/2.jpg",
             ],
@@ -482,7 +484,7 @@ Se accepta orice fel de teste/ proba pe raza judetului Brasov.
         sleep(2);
         $this->addElectronicItem('Masina de cusut Singer.',
             "Vand masina de cusut Singer functionala.",
-            1000, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Giurgiu, Giurgiu",
+            1000, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Giurgiu, Giurgiu",
             ['images/cusut/1.jpg',
                 "images/cusut/2.jpg",
             ],
@@ -940,18 +942,6 @@ Transport 30lei dus-intors pentru produsele trimise de dvs catre noi la reparat.
             ItemsType::CAMERE_VIDEO_SI_ACCESORII,
             "Logitech", "C920", 2017,
             true);
-        sleep(2);
-        $this->addElectronicItem('Televizor Samsung',
-            "TV Samsung 4k ultra hd, diagonala 101 cm, smart TV, garantie, achiziționat iulie 2018,stare ft bună!",
-            1800, false, 0,0, Category::ELECTONICE_ELECTROCASNICE, "Craiova, Dolj",
-            [ 'images/tv/1.jpg',
-                "images/tv/2.jpg",
-            ],
-            SubCategory::TV_AUDIO_FOTO_VIDEO,
-            ItemsType::TELEVIZOARE_ACCESORII,
-            "Samsung", "", 2018,
-            true);
-
 
           sleep(2);
         $this->addElectronicItem('Logitech G635 2019, Surround 7.1 Casti GAMING RGB - DTS 2.0',

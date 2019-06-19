@@ -25,7 +25,7 @@ class UsersSeeder extends Seeder
         $admin->name = "Admin";
         $admin->email = "admin@tasks.com";
         $admin->phone = "0727576572";
-        $admin->password = Hash::make("admin");
+        $admin->password = Hash::make("sms123");
         $admin->status = User::STATUS_ACTIVE;
         $admin->role_id = Role::ROLE_ADMIN;
 

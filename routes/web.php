@@ -37,7 +37,7 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
     $router->post('/verify', ['uses' => 'UserController@verify']);
     $router->post('/forgot-password', ['uses' => 'UserController@forgotPassword']);
     $router->post('/change-password', ['uses' => 'UserController@changePassword']);
-    $router->post('/test', ['uses' => 'ItemController@test']);
+    $router->get('/test', ['uses' => 'ItemController@test']);
     $router->get('/item/{id}', ['uses' => 'ItemController@getItem']);
     $router->get('/items/{id}', ['uses' => 'ItemController@getUsersItems']);
     $router->get('/search', ['uses' => 'ItemController@search']);
@@ -51,6 +51,7 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
 
     $router->group(['prefix' => 'user'], function () use ($router) {
         $router->get('/', ['uses' => 'UserController@get']);
+        $router->post('/', ['uses' => 'UserController@updateAvatar']);
         $router->patch('/', ['uses' => 'UserController@update']);
     });
 

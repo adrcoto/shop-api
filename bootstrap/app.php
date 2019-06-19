@@ -98,6 +98,8 @@ $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->configure('mail');
 
 
+$app->register(\Intervention\Image\ImageServiceProviderLumen::class);
+
 $app->singleton(
     Illuminate\Contracts\Filesystem\Factory::class,
     function ($app) {

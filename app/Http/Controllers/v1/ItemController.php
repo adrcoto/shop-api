@@ -113,6 +113,10 @@ class ItemController extends Controller
             else
                 $itemsToBuild = Item::orderBy('created_at', 'desc')->paginate($perPage);
 
+            if ($request->has('filteres')) {
+
+            }
+
             return $this->returnSuccess(['items' => Util::buildItems($itemsToBuild), 'total' => $itemsToBuild->total()]);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
@@ -149,7 +153,8 @@ class ItemController extends Controller
         }
     }
 
-    public function getUsersItems($id){
+    public function getUsersItems($id)
+    {
         try {
 
             $requestedItems = Item::where('owner', $id)->get();
@@ -534,7 +539,6 @@ class ItemController extends Controller
                     }
                     break;
             }
-
             if ($request->has('images'))
                 foreach ($request->images as $image) {
                     $filename = $image->store('images', 'public');
@@ -601,21 +605,16 @@ class ItemController extends Controller
     public function test(Request $request)
     {
         try {
-            if ($request->has('images'))
-                foreach ($request->images as $image) {
-                    $filename = $image->store('images', 'public');
-                    ItemsImage::create([
-                        'item_id' => 1,
-                        'filename' => $filename
-                    ]);
-                }
 
-            if ($request->has('toDelete'))
-//                foreach($request->toDelete as $image)
-//                    Storage::disk('public')->delete($image);
+            $itemsToBuild = null;
 
+            if ($request->has('category')) {
+                $itemsToBuild = Item::where('items.category', $request->category)->orderBy('created_at', 'desc')->paginate(15);
+                if ($request->has('subcategory'))
+                    $itemsToBuild = Item::where('items.category', $request->category)->where('')->orderBy('created_at', 'desc')->paginate(15);
+            }
 
-                return $this->returnSuccess($request->toDelete);
+            return $this->returnSuccess(['items' => Util::buildItems($itemsToBuild), 'total' => $itemsToBuild->total()]);
         } catch
         (\Exception $e) {
             return $this->returnError($e->getMessage());

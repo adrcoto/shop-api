@@ -60,9 +60,9 @@ return [
             'visibility' => 'public'
         ],
 
-        'hard-images' => [
+        'user-avatars' => [
             'driver' => 'local',
-            'root' => storage_path('app/public/hard-images'),
+            'root' => storage_path('app/public/user-avatars'),
             'visibility' => 'public'
         ]
     ],
