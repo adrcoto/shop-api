@@ -25,7 +25,11 @@ class Util
             $itemBuilt->negotiable = $itemToBuild->negotiable;
             $itemBuilt->change = $itemToBuild->change;
             $itemBuilt->category = $itemToBuild->category;
-            $itemBuilt->location = $itemToBuild->location;
+            $itemBuilt->sub_category = $itemToBuild->sub_category;
+            $itemBuilt->item_type = $itemToBuild->item_type;
+//            $itemBuilt->location = $itemToBuild->location;
+            $itemBuilt->city = $itemToBuild->city;
+            $itemBuilt->district = $itemToBuild->district;
             $itemBuilt->status = $itemToBuild->status;
             $itemBuilt->owner = $itemToBuild->owner;
             $itemBuilt->created_at = $itemToBuild->created_at;
@@ -36,18 +40,12 @@ class Util
             if ($cat == Category::ELECTONICE_ELECTROCASNICE) {
                 $electronic = Electronic::find($itemToBuild->item_id);
 
-                $itemBuilt->sub_category = $electronic->sub_category;
-                $itemBuilt->item_type = $electronic->item_type;
-
                 $itemBuilt->manufacturer = $electronic->manufacturer;
                 $itemBuilt->model = $electronic->model;
                 $itemBuilt->manufacturer_year = $electronic->manufacturer_year;
                 $itemBuilt->used = $electronic->used;
             } else {
                 $vehicle = Vehicle::find($itemToBuild->item_id);
-
-                $itemBuilt->sub_category = $vehicle->sub_category;
-                $itemBuilt->item_type = $vehicle->item_type;
 
                 $itemBuilt->manufacturer = $vehicle->manufacturer;
                 $itemBuilt->model = $vehicle->model;

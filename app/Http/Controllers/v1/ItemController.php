@@ -21,6 +21,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 
 /**
  * Class ItemController
@@ -52,70 +53,150 @@ class ItemController extends Controller
     public function search(Request $request)
     {
         try {
-            /*
-             * Sends searched items with images
-             */
 
-            /*            $perPage = $request->perPage / 2;
+            $perPage = $request->perPage;
+            $itemsToBuild = null;
 
-                        $count = Item::count();
+            if ($request->has('q')) {
+                $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($perPage);
 
-                        $items = new Collection();
-                        if ($request->has('q')) {
-                            $vehicles = DB::table('items')
-                                ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
-                                ->where('items.title', 'LIKE', '%' . $request->q . '%')
+                // q + city
+                if ($request->has('city')) {
+                    $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                        ->where('items.city', '=', $request->city)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate($perPage);
+                    if ($request->has('district')) {
+                        $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                            ->where('items.city', '=', $request->city)
+                            ->where('items.district', '=', $request->district)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate($perPage);
+                        if ($request->has('category')) {
+                            $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                                ->where('items.city', '=', $request->city)
+                                ->where('items.district', '=', $request->district)
+                                ->where('items.category', '=', $request->category)
                                 ->orderBy('created_at', 'desc')
                                 ->paginate($perPage);
 
-                            //electronics
-                            $electronics = DB::table('items')
-                                ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
-                                ->where('items.title', 'LIKE', '%' . $request->q . '%')
-                                ->orderBy('created_at', 'desc')
-                                ->paginate($perPage);
+                            if ($request->has('sub_category')) {
+                                $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                                    ->where('items.city', '=', $request->city)
+                                    ->where('items.district', '=', $request->district)
+                                    ->where('items.category', '=', $request->category)
+                                    ->where('items.sub_category', '=', $request->sub_category)
+                                    ->orderBy('created_at', 'desc')
+                                    ->paginate($perPage);
+                            }
+                        }
+                    } //ends if has city
+                } else if ($request->has('district')) {
+                    $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                        ->where('items.district', '=', $request->district)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate($perPage);
 
-                        } else {
-                            $vehicles = DB::table('items')
-                                ->join('vehicles', 'items.item_id', '=', 'vehicles.item_id')
-                                ->orderBy('created_at', 'desc')
-                                ->paginate($perPage);
-
-                            //electronics
-                            $electronics = DB::table('items')
-                                ->join('electronics', 'items.item_id', '=', 'electronics.item_id')
+                    if ($request->has('category')) {
+                        $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                            ->where('items.district', '=', $request->district)
+                            ->where('items.category', '=', $request->category)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate($perPage);
+                        if ($request->has('sub_category')) {
+                            $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                                ->where('items.district', '=', $request->district)
+                                ->where('items.category', '=', $request->category)
+                                ->where('items.sub_category', '=', $request->sub_category)
                                 ->orderBy('created_at', 'desc')
                                 ->paginate($perPage);
                         }
+                    }
+                } else if ($request->has('category')) {
+                    $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                        ->where('items.category', '=', $request->category)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate($perPage);
 
+                    if ($request->has('sub_category')) {
+                        $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                            ->where('items.category', '=', $request->category)
+                            ->where('items.sub_category', '=', $request->sub_category)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate($perPage);
+                    }
+                }
+            } else if ($request->has('city')) {
+                $itemsToBuild = Item::where('items.city', '=', $request->city)
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($perPage);
+                if ($request->has('district')) {
+                    $itemsToBuild = Item::where('items.city', '=', $request->city)
+                        ->where('items.district', '=', $request->district)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate($perPage);
+                    if ($request->has('category')) {
+                        $itemsToBuild = Item::where('items.city', '=', $request->city)
+                            ->where('items.district', '=', $request->district)
+                            ->where('items.category', '=', $request->category)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate($perPage);
 
-
-                        foreach ($vehicles as $vehicle)
-                            $items->push($vehicle);
-
-                        foreach ($electronics as $electronic)
-                            $items->push($electronic);
-
-                        foreach ($items as $item)
-                            $item->images = DB::table('items_images')->where('item_id', '=', $item->item_id)->get();
-
-                        if ($items->isEmpty())
-                            return $this->returnNotFound('Bate vantul pe aici');
-                        $this->quickSort($items, 0, count($items) - 1);*/
-
-            $perPage = $request->perPage;
-
-            $itemsToBuild = null;
-
-            if ($request->has('q'))
-                $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')->orderBy('created_at', 'desc')->paginate($perPage);
-
-            else
+                        if ($request->has('sub_category')) {
+                            $itemsToBuild = Item::where('items.city', '=', $request->city)
+                                ->where('items.district', '=', $request->district)
+                                ->where('items.category', '=', $request->category)
+                                ->where('items.sub_category', '=', $request->sub_category)
+                                ->orderBy('created_at', 'desc')
+                                ->paginate($perPage);
+                        }
+                    }
+                } //ends if has district
+                else if ($request->has('category')) {
+                    $itemsToBuild = Item::where('items.city', '=', $request->city)
+                        ->where('items.category', '=', $request->category)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate($perPage);
+                    if ($request->has('sub_category')) {
+                        $itemsToBuild = Item::where('items.city', '=', $request->city)
+                            ->where('items.category', '=', $request->category)
+                            ->where('items.sub_category', '=', $request->sub_category)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate($perPage);
+                    }
+                }
+            } else if ($request->has('district')) {
+                $itemsToBuild = Item::where('items.district', '=', $request->district)
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($perPage);
+                if ($request->has('category')) {
+                    $itemsToBuild = Item::where('items.district', '=', $request->district)
+                        ->where('items.category', '=', $request->category)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate($perPage);
+                    if ($request->has('sub_category')) {
+                        $itemsToBuild = Item::where('items.district', '=', $request->district)
+                            ->where('items.category', '=', $request->category)
+                            ->where('items.sub_category', '=', $request->sub_category)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate($perPage);
+                    }
+                }
+            } else if ($request->has('category')) {
+                $itemsToBuild = Item::where('items.category', '=', $request->category)
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($perPage);
+                if ($request->has('sub_category')) {
+                    $itemsToBuild = Item::where('items.category', '=', $request->category)
+                        ->where('items.sub_category', '=', $request->sub_category)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate($perPage);
+                }
+            } else
                 $itemsToBuild = Item::orderBy('created_at', 'desc')->paginate($perPage);
 
-            if ($request->has('filteres')) {
-
-            }
 
             return $this->returnSuccess(['items' => Util::buildItems($itemsToBuild), 'total' => $itemsToBuild->total()]);
         } catch (\Exception $e) {
@@ -189,7 +270,9 @@ class ItemController extends Controller
                 'category' => 'bail|required|exists:categories,id',
                 'sub_category' => 'bail|required|exists:sub_categories,id',
                 'type' => 'bail|required|exists:items_types,id',
-                'location' => 'required',
+//                'location' => 'required',
+                'city' => 'required',
+                'district' => 'required',
             ];
 
             $message = [
@@ -208,7 +291,9 @@ class ItemController extends Controller
                 'sub_category.exists' => 'Categorie invalidă',
                 'type.required' => 'Alegeți un tip',
                 'type.exists' => 'Tip invalid',
-                'location.required' => 'Alegeți o locație',
+//                'location.required' => 'Alegeți o locație',
+                'city.required' => 'Alegeți o locație',
+                'district.required' => 'Alegeți o locație',
             ];
 
             $validator = Validator::make($request->all(), $rules, $message);
@@ -224,15 +309,13 @@ class ItemController extends Controller
             $sub_categories = SubCategory::where('category', $category)->get();
 
             //checks if provided subcategory exists in selected category
-            if (!$sub_categories->contains($sub_category))
-                return $this->returnBadRequest('Categorie invalidă');
+            if (!$sub_categories->contains($sub_category)) return $this->returnBadRequest('Categorie invalidă');
 
             //checks if provided item type exists in selected category->subcategory
             $item_types = ItemsType::where('sub_category', $request->sub_category)->get();
 
 
-            if (!$item_types->contains($type))
-                return $this->returnBadRequest('Tip invalid');
+            if (!$item_types->contains($type)) return $this->returnBadRequest('Tip invalid');
 
 
             $item = new Item();
@@ -245,7 +328,11 @@ class ItemController extends Controller
             $item->negotiable = $request->negotiable;
             $item->change = $request->change;
             $item->category = $category;
-            $item->location = $request->location;
+            $item->sub_category = $sub_category;
+            $item->item_type = $type;
+//            $item->location = $request->location;
+            $item->city = $request->city;
+            $item->district = $request->district;
             $item->status = Item::STATUS_ACTIVE;
             $item->owner = $user->id;
 
@@ -259,20 +346,15 @@ class ItemController extends Controller
                         $electronic = new Electronic();
 
                         $electronic->item_id = $item->item_id;
-                        $electronic->sub_category = $sub_category;
-                        $electronic->item_type = $type;
 
-                        if ($request->has('manufacturer'))
-                            $electronic->manufacturer = $request->manufacturer;
 
-                        if ($request->has('model'))
-                            $electronic->model = $request->model;
+                        if ($request->has('manufacturer')) $electronic->manufacturer = $request->manufacturer;
 
-                        if ($request->has('manufacturer_year'))
-                            $electronic->manufacturer_year = $request->manufacturer_year;
+                        if ($request->has('model')) $electronic->model = $request->model;
 
-                        if ($request->has('used'))
-                            $electronic->used = $request->used;
+                        if ($request->has('manufacturer_year')) $electronic->manufacturer_year = $request->manufacturer_year;
+
+                        if ($request->has('used')) $electronic->used = $request->used;
 
                         $electronic->save();
                     }
@@ -289,68 +371,46 @@ class ItemController extends Controller
                         //building the vehicles object
 
                         $vehicle->item_id = $item->item_id;
-                        $vehicle->sub_category = $sub_category;
-                        $vehicle->item_type = $type;
 
-                        if ($request->has('manufacturer'))
-                            $vehicle->manufacturer = $request->manufacturer;
+                        if ($request->has('manufacturer')) $vehicle->manufacturer = $request->manufacturer;
 
-                        if ($request->has('model'))
-                            $vehicle->model = $request->model;
+                        if ($request->has('model')) $vehicle->model = $request->model;
 
-                        if ($request->has('manufacturer_year'))
-                            $vehicle->manufacturer_year = $request->manufacturer_year;
+                        if ($request->has('manufacturer_year')) $vehicle->manufacturer_year = $request->manufacturer_year;
 
-                        if ($request->has('engine'))
-                            $vehicle->engine = $request->engine;
+                        if ($request->has('engine')) $vehicle->engine = $request->engine;
 
-                        if ($request->has('power'))
-                            $vehicle->power = $request->power;
+                        if ($request->has('power')) $vehicle->power = $request->power;
 
-                        if ($request->has('gearbox'))
-                            $vehicle->gearbox = $request->gearbox;
+                        if ($request->has('gearbox')) $vehicle->gearbox = $request->gearbox;
 
-                        if ($request->has('body'))
-                            $vehicle->body = $request->body;
+                        if ($request->has('body')) $vehicle->body = $request->body;
 
-                        if ($request->has('fuel_type'))
-                            $vehicle->fuel_type = $request->fuel_type;
+                        if ($request->has('fuel_type')) $vehicle->fuel_type = $request->fuel_type;
 
-                        if ($request->has('mileage'))
-                            $vehicle->mileage = $request->mileage;
+                        if ($request->has('mileage')) $vehicle->mileage = $request->mileage;
 
-                        if ($request->has('drive'))
-                            $vehicle->drive = $request->drive;
+                        if ($request->has('drive')) $vehicle->drive = $request->drive;
 
-                        if ($request->has('emission_class'))
-                            $vehicle->emission_class = $request->emission_class;
+                        if ($request->has('emission_class')) $vehicle->emission_class = $request->emission_class;
 
-                        if ($request->has('color'))
-                            $vehicle->color = $request->color;
+                        if ($request->has('color')) $vehicle->color = $request->color;
 
-                        if ($request->has('origin'))
-                            $vehicle->origin = $request->origin;
+                        if ($request->has('origin')) $vehicle->origin = $request->origin;
 
-                        if ($request->has('VIN'))
-                            $vehicle->VIN = $request->VIN;
+                        if ($request->has('VIN')) $vehicle->VIN = $request->VIN;
 
-                        if ($request->has('used'))
-                            $vehicle->used = $request->used;
+                        if ($request->has('used')) $vehicle->used = $request->used;
 
-                        if ($request->has('pollution_tax'))
-                            $vehicle->pollution_tax = $request->pollution_tax;
+                        if ($request->has('pollution_tax')) $vehicle->pollution_tax = $request->pollution_tax;
 
-                        if ($request->has('damaged'))
-                            $vehicle->damaged = $request->damaged;
+                        if ($request->has('damaged')) $vehicle->damaged = $request->damaged;
 
-                        if ($request->has('registered'))
-                            $vehicle->registered = $request->registered;
+                        if ($request->has('registered')) $vehicle->registered = $request->registered;
 
-                        if ($request->has('first_owner'))
-                            $vehicle->first_owner = $request->first_owner;
+                        if ($request->has('first_owner')) $vehicle->first_owner = $request->first_owner;
 
-                        if ($request->has('right_hand_drive'))
-                            $vehicle->right_hand_drive = $request->right_hand_drive;
+                        if ($request->has('right_hand_drive')) $vehicle->right_hand_drive = $request->right_hand_drive;
 
                         $vehicle->save();
                     }
@@ -413,16 +473,14 @@ class ItemController extends Controller
 
             $validator = Validator::make($request->all(), $rules, $message);
 
-            if (!$validator->passes())
-                return $this->returnBadRequest($validator->errors()->first());
+            if (!$validator->passes()) return $this->returnBadRequest($validator->errors()->first());
 
 
             $user = $this->validateSession();
 
             $item = Item::find($id);
 
-            if (!$item)
-                $this->returnBadRequest('Anunțul nu a putut fi găsit');
+            if (!$item) $this->returnBadRequest('Anunțul nu a putut fi găsit');
 
             if ($user->role_id === Role::ROLE_USER && $user->id !== $item->owner)
                 return $this->returnError('Nu aveți drepturile necesare pentru a modifica acest anunț');
@@ -432,23 +490,21 @@ class ItemController extends Controller
                 $item->slug = Str::slug($request->title, '-');
             }
 
-            if ($request->has('description'))
-                $item->description = $request->description;
+            if ($request->has('description')) $item->description = $request->description;
 
-            if ($request->has('price'))
-                $item->price = $request->price;
+            if ($request->has('price')) $item->price = $request->price;
 
-            if ($request->has('currency'))
-                $item->currency = $request->currency;
+            if ($request->has('currency')) $item->currency = $request->currency;
 
-            if ($request->has('negotiable'))
-                $item->negotiable = $request->negotiable;
+            if ($request->has('negotiable')) $item->negotiable = $request->negotiable;
 
-            if ($request->has('change'))
-                $item->change = $request->change;
+            if ($request->has('change')) $item->change = $request->change;
 
-            if ($request->has('location'))
-                $item->location = $request->location;
+//            if ($request->has('location')) $item->location = $request->location;
+
+            if ($request->has('city')) $item->city = $request->city;
+
+            if ($request->has('district')) $item->district = $request->district;
 
             switch ($item->category) {
                 case Category::ELECTONICE_ELECTROCASNICE :
@@ -457,17 +513,13 @@ class ItemController extends Controller
 
                         $electronic = Electronic::find($id);
 
-                        if ($request->has('manufacturer'))
-                            $electronic->manufacturer = $request->manufacturer;
+                        if ($request->has('manufacturer')) $electronic->manufacturer = $request->manufacturer;
 
-                        if ($request->has('model'))
-                            $electronic->model = $request->model;
+                        if ($request->has('model')) $electronic->model = $request->model;
 
-                        if ($request->has('manufacturer_year'))
-                            $electronic->manufacturer_year = $request->manufacturer_year;
+                        if ($request->has('manufacturer_year')) $electronic->manufacturer_year = $request->manufacturer_year;
 
-                        if ($request->has('used'))
-                            $electronic->used = $request->used;
+                        if ($request->has('used')) $electronic->used = $request->used;
 
                         $electronic->save();
                     }
@@ -478,62 +530,43 @@ class ItemController extends Controller
 
                         $vehicle = Vehicle::find($id);
 
-                        if ($request->has('manufacturer'))
-                            $vehicle->manufacturer = $request->manufacturer;
+                        if ($request->has('manufacturer')) $vehicle->manufacturer = $request->manufacturer;
 
-                        if ($request->has('model'))
-                            $vehicle->model = $request->model;
+                        if ($request->has('model')) $vehicle->model = $request->model;
 
-                        if ($request->has('manufacturer_year'))
-                            $vehicle->manufacturer_year = $request->manufacturer_year;
+                        if ($request->has('manufacturer_year')) $vehicle->manufacturer_year = $request->manufacturer_year;
 
-                        if ($request->has('engine'))
-                            $vehicle->engine = $request->engine;
+                        if ($request->has('engine')) $vehicle->engine = $request->engine;
 
-                        if ($request->has('power'))
-                            $vehicle->power = $request->power;
+                        if ($request->has('power')) $vehicle->power = $request->power;
 
-                        if ($request->has('gearbox'))
-                            $vehicle->gearbox = $request->gearbox;
+                        if ($request->has('gearbox')) $vehicle->gearbox = $request->gearbox;
 
-                        if ($request->has('body'))
-                            $vehicle->body = $request->body;
+                        if ($request->has('body')) $vehicle->body = $request->body;
 
-                        if ($request->has('fuel_type'))
-                            $vehicle->fuel_type = $request->fuel_type;
+                        if ($request->has('fuel_type')) $vehicle->fuel_type = $request->fuel_type;
 
-                        if ($request->has('mileage'))
-                            $vehicle->mileage = $request->mileage;
+                        if ($request->has('mileage')) $vehicle->mileage = $request->mileage;
 
-                        if ($request->has('drive'))
-                            $vehicle->drive = $request->drive;
+                        if ($request->has('drive')) $vehicle->drive = $request->drive;
 
-                        if ($request->has('emission_class'))
-                            $vehicle->emission_class = $request->emission_class;
+                        if ($request->has('emission_class')) $vehicle->emission_class = $request->emission_class;
 
-                        if ($request->has('color'))
-                            $vehicle->color = $request->color;
+                        if ($request->has('color')) $vehicle->color = $request->color;
 
-                        if ($request->has('origin'))
-                            $vehicle->origin = $request->origin;
+                        if ($request->has('origin')) $vehicle->origin = $request->origin;
 
-                        if ($request->has('VIN'))
-                            $vehicle->VIN = $request->VIN;
+                        if ($request->has('VIN')) $vehicle->VIN = $request->VIN;
 
-                        if ($request->has('used'))
-                            $vehicle->used = $request->used;
+                        if ($request->has('used')) $vehicle->used = $request->used;
 
-                        if ($request->has('pollution_tax'))
-                            $vehicle->pollution_tax = $request->pollution_tax;
+                        if ($request->has('pollution_tax')) $vehicle->pollution_tax = $request->pollution_tax;
 
-                        if ($request->has('damaged'))
-                            $vehicle->damaged = $request->damaged;
+                        if ($request->has('damaged')) $vehicle->damaged = $request->damaged;
 
-                        if ($request->has('first_owner'))
-                            $vehicle->first_owner = $request->first_owner;
+                        if ($request->has('first_owner')) $vehicle->first_owner = $request->first_owner;
 
-                        if ($request->has('right_hand_drive'))
-                            $vehicle->right_hand_drive = $request->right_hand_drive;
+                        if ($request->has('right_hand_drive')) $vehicle->right_hand_drive = $request->right_hand_drive;
 
                         $vehicle->save();
                     }
@@ -577,8 +610,7 @@ class ItemController extends Controller
 
             $item = Item::find($id);
 
-            if (!$item)
-                return $this->returnBadRequest('Item not found');
+            if (!$item) return $this->returnBadRequest('Item not found');
 
             if ($user->role_id === Role::ROLE_USER && $user->id !== $item->owner)
                 return $this->returnError('Nu aveți drepturile necesare pentru a șterge acest anunț');
@@ -605,14 +637,166 @@ class ItemController extends Controller
     public function test(Request $request)
     {
         try {
+            $filters = [];
 
-            $itemsToBuild = null;
-
-            if ($request->has('category')) {
-                $itemsToBuild = Item::where('items.category', $request->category)->orderBy('created_at', 'desc')->paginate(15);
-                if ($request->has('subcategory'))
-                    $itemsToBuild = Item::where('items.category', $request->category)->where('')->orderBy('created_at', 'desc')->paginate(15);
+            if ($request->has('q')) {
+                $filters = Arr::add($filters, 'q', $request->q);
             }
+
+            if ($request->has('city')) {
+                $filters = Arr::add($filters, 'city', $request->city);
+            }
+            if ($request->has('district')) {
+                $filters = Arr::add($filters, 'district', $request->district);
+            }
+            if ($request->has('category')) {
+                $filters = Arr::add($filters, 'category', $request->category);
+            }
+            if ($request->has('sub_category')) {
+                $filters = Arr::add($filters, 'sub_category', $request->sub_category);
+            }
+
+
+            if ($request->has('q')) {
+                $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(15);
+
+                // q + city
+                if ($request->has('city')) {
+                    $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                        ->where('items.city', '=', $request->city)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(15);
+                    if ($request->has('district')) {
+                        $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                            ->where('items.city', '=', $request->city)
+                            ->where('items.district', '=', $request->district)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(15);
+                        if ($request->has('category')) {
+                            $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                                ->where('items.city', '=', $request->city)
+                                ->where('items.district', '=', $request->district)
+                                ->where('items.category', '=', $request->category)
+                                ->orderBy('created_at', 'desc')
+                                ->paginate(15);
+
+                            if ($request->has('sub_category')) {
+                                $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                                    ->where('items.city', '=', $request->city)
+                                    ->where('items.district', '=', $request->district)
+                                    ->where('items.category', '=', $request->category)
+                                    ->where('items.sub_category', '=', $request->sub_category)
+                                    ->orderBy('created_at', 'desc')
+                                    ->paginate(15);
+                            }
+                        }
+                    } //ends if has city
+                } else if ($request->has('district')) {
+                    $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                        ->where('items.district', '=', $request->district)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(15);
+
+                    if ($request->has('category')) {
+                        $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                            ->where('items.district', '=', $request->district)
+                            ->where('items.category', '=', $request->category)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(15);
+                        if ($request->has('sub_category')) {
+                            $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                                ->where('items.district', '=', $request->district)
+                                ->where('items.category', '=', $request->category)
+                                ->where('items.sub_category', '=', $request->sub_category)
+                                ->orderBy('created_at', 'desc')
+                                ->paginate(15);
+                        }
+                    }
+                } else if ($request->has('category')) {
+                    $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                        ->where('items.category', '=', $request->category)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(15);
+
+                    if ($request->has('sub_category')) {
+                        $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
+                            ->where('items.category', '=', $request->category)
+                            ->where('items.sub_category', '=', $request->sub_category)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(15);
+                    }
+                }
+            } else if ($request->has('city')) {
+                $itemsToBuild = Item::where('items.city', '=', $request->city)
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(15);
+                if ($request->has('district')) {
+                    $itemsToBuild = Item::where('items.city', '=', $request->city)
+                        ->where('items.district', '=', $request->district)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(15);
+                    if ($request->has('category')) {
+                        $itemsToBuild = Item::where('items.city', '=', $request->city)
+                            ->where('items.district', '=', $request->district)
+                            ->where('items.category', '=', $request->category)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(15);
+
+                        if ($request->has('sub_category')) {
+                            $itemsToBuild = Item::where('items.city', '=', $request->city)
+                                ->where('items.district', '=', $request->district)
+                                ->where('items.category', '=', $request->category)
+                                ->where('items.sub_category', '=', $request->sub_category)
+                                ->orderBy('created_at', 'desc')
+                                ->paginate(15);
+                        }
+                    }
+                } //ends if has district
+                else if ($request->has('category')) {
+                    $itemsToBuild = Item::where('items.city', '=', $request->city)
+                        ->where('items.category', '=', $request->category)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(15);
+                    if ($request->has('sub_category')) {
+                        $itemsToBuild = Item::where('items.city', '=', $request->city)
+                            ->where('items.category', '=', $request->category)
+                            ->where('items.sub_category', '=', $request->sub_category)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(15);
+                    }
+                }
+            } else if ($request->has('district')) {
+                $itemsToBuild = Item::where('items.district', '=', $request->district)
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(15);
+                if ($request->has('category')) {
+                    $itemsToBuild = Item::where('items.district', '=', $request->district)
+                        ->where('items.category', '=', $request->category)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(15);
+                    if ($request->has('sub_category')) {
+                        $itemsToBuild = Item::where('items.district', '=', $request->district)
+                            ->where('items.category', '=', $request->category)
+                            ->where('items.sub_category', '=', $request->sub_category)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(15);
+                    }
+                }
+            } else if ($request->has('category')) {
+                $itemsToBuild = Item::where('items.category', '=', $request->category)
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(15);
+                if ($request->has('sub_category')) {
+                    $itemsToBuild = Item::where('items.category', '=', $request->category)
+                        ->where('items.sub_category', '=', $request->sub_category)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(15);
+                }
+            } else
+                $itemsToBuild = Item::orderBy('created_at', 'desc')->paginate(15);
+
 
             return $this->returnSuccess(['items' => Util::buildItems($itemsToBuild), 'total' => $itemsToBuild->total()]);
         } catch

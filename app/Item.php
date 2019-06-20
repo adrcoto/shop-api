@@ -16,7 +16,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property boolean negotiable
  * @property boolean change
  * @property integer category
- * @property string location
+ * @property integer sub_category
+ * @property integer item_type
+ * @property string city
+ * @property string $district
  * @property boolean status
  * @property integer owner
  * @package App
@@ -43,7 +46,10 @@ class Item extends Model
         'price',
         'currency',
         'category',
-        'location',
+        'sub_category',
+        'item_type',
+        'city',
+        'district',
         'status',
         'owner'
     ];

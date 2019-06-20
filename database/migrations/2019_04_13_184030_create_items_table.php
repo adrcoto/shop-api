@@ -22,8 +22,15 @@ class CreateItemsTable extends Migration
             $table->tinyInteger('currency');
             $table->tinyInteger('negotiable');
             $table->tinyInteger('change');
+
             $table->integer('category')->unsigned();
-            $table->string('location');
+            $table->integer('sub_category')->unsigned();
+            $table->integer('item_type')->unsigned();
+
+            $table->string('city');
+            $table->string('district');
+
+//            $table->string('location');
             $table->tinyInteger('status');
             $table->integer('owner')->unsigned();
 
@@ -32,6 +39,11 @@ class CreateItemsTable extends Migration
 
         Schema::table('items', function ($table) {
             $table->foreign('category')->references('id')->on('categories')->onDelete('cascade');
+
+
+            $table->foreign('sub_category')->references('id')->on('sub_categories');
+            $table->foreign('item_type')->references('id')->on('items_types');
+
             $table->foreign('owner')->references('id')->on('users')->onDelete('cascade');
         });
     }

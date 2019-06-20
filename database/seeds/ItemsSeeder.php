@@ -21,12 +21,7 @@ class ItemsSeeder extends Seeder
      */
     public function run()
     {
-        $images = [
-            'images/cayenne/cayenne.png',
-            'images/cayenne/cayenne1.jpg',
-            'images/cayenne/cayenne2.jpg',
-        ];
-        sleep(3);
+
         $this->addVehicleItem(
             'Porsche Cayenne 2012',
             "Tot ce-i trebuie, full option",
@@ -36,7 +31,12 @@ class ItemsSeeder extends Seeder
             1,
             Category::AUTO_MOTO_NAUTICA,
             "Craiova",
-            $images,
+            "Dolj",
+            [
+                'images/cayenne/cayenne.png',
+                'images/cayenne/cayenne1.jpg',
+                'images/cayenne/cayenne2.jpg',
+            ],
             SubCategory::AUTOTURISME,
             ItemsType::AUTOTURISM,
             "Porsche",
@@ -58,61 +58,56 @@ class ItemsSeeder extends Seeder
             false,
             true,
             false);
-        $images = [
-            'images/s10/1.jpg',
-            'images/s10/2.jpg',
-            'images/s10/3.jpg',
-            'images/s10/4.jpg',
-            'images/s10/5.jpg',
-            'images/s10/6.jpg',
-        ];
+
+
         sleep(2);
         //telefon
         $this->addElectronicItem('Samsung Galaxy S10', "E furat din UK",
-            3600, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Bals",
-            $images,
+            3600, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Balș", 'Olt', [
+                'images/s10/1.jpg',
+                'images/s10/2.jpg',
+                'images/s10/3.jpg',
+                'images/s10/4.jpg',
+                'images/s10/5.jpg',
+                'images/s10/6.jpg',
+            ],
             SubCategory::TELEFOANE,
             ItemsType::TELEFOANE_MOBILE,
             "Samsung", "Galaxy S10", 2018,
             false);
-        $images = [
-            'images/s9+/1.jpg',
-            'images/s9+/2.jpg',
-            'images/s9+/3.jpeg',
-        ];
+
+
         sleep(1);
         //telefon
         $this->addElectronicItem('Samsung Galaxy S9+', "E furat din UK",
-            2500, false, 0, 1,Category::ELECTONICE_ELECTROCASNICE, "Bucuresti",
-            $images,
+            2500, false, 0, 1, Category::ELECTONICE_ELECTROCASNICE, "București", 'Ilfov',
+            [
+                'images/s9+/1.jpg',
+                'images/s9+/2.jpg',
+                'images/s9+/3.jpeg',
+            ],
             SubCategory::TELEFOANE,
             ItemsType::TELEFOANE_MOBILE,
             "Samsung", "Galaxy S9+", 2017,
             true);
-        $images = [
-            'images/congelator arctic/1.jpg',
-            'images/congelator arctic/2.jpg',
-            'images/congelator arctic/3.jpg',
-        ];
+
+
         sleep(2);
         //congelator
         $this->addElectronicItem('Congelator 5 sertare arctic',
             "Vând congelator 5 sertare arctic stare foarte bună de funcționare curat și complet",
-            3600, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Constanta",
-            $images,
+            3600, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Constanța", "Constanța",
+            [
+                'images/congelator arctic/1.jpg',
+                'images/congelator arctic/2.jpg',
+                'images/congelator arctic/3.jpg'
+            ],
             SubCategory::ELECTROCASNICE,
             ItemsType::APARATE_FRIGORIFICE,
             "Artic", "", 0,
             false);
-        $images = [
-            'images/nikon/1.jpg',
-            'images/nikon/2.jpg',
-            'images/nikon/3.jpg',
-            'images/nikon/4.jpg',
-            'images/nikon/5.jpg',
-            'images/nikon/6.jpg',
-            'images/nikon/7.jpg',
-        ];
+
+
         sleep(1);
         $this->addElectronicItem('Nikon D7100 + 2 obiective',
             "Nikon folosit in regim hobby.
@@ -125,17 +120,21 @@ Nu se vinde separat
 Pret 3.200 lei
 Aparatul se poate vedea in Miercurea Ciuc. Accept orice test.Predare personala in Miercurea Ciuc.
 Trimit si in tara cu verificare colet.",
-            3200, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti",
-            $images,
+            3200, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti", 'Ilfov',
+            [
+                'images/nikon/1.jpg',
+                'images/nikon/2.jpg',
+                'images/nikon/3.jpg',
+                'images/nikon/4.jpg',
+                'images/nikon/5.jpg',
+                'images/nikon/6.jpg',
+                'images/nikon/7.jpg',
+            ],
             SubCategory::TV_AUDIO_FOTO_VIDEO,
             ItemsType::APARATE_FOTO_SI_ACCESORII,
             "Nikon", "", 2017,
             true);
-        $images = [
-            'images/zte/1.jpg',
-            'images/zte/2.jpg',
-            'images/zte/3.jpg',
-        ];
+
         sleep(3);
         //dezmembrare wot is this
         $this->addElectronicItem('Dezmembrez Zte Grand X In',
@@ -149,42 +148,47 @@ Garantie
 Montaj 30 lei
 Transport 25 lei
 Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
-            50, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
-            $images,
+            50, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova", "Dolj",
+            [
+                'images/zte/1.jpg',
+                'images/zte/2.jpg',
+                'images/zte/3.jpg',
+            ],
             SubCategory::TELEFOANE,
             ItemsType::ACCESORII_GSM,
             "", "", 0,
             true);
-        $images = [
-            'images/husa/1.jpg',
-            'images/husa/2.jpg',
-            'images/husa/3.jpg',
-            'images/husa/4.jpg',
-            'images/husa/5.jpg',
-            'images/husa/6.jpg',
-            'images/husa/7.jpg',
-            'images/husa/8.jpg',
-        ];
+
         sleep(1);
         //husa
         $this->addElectronicItem('Set husa slim transparenta TPU + folie sticla Hoco iPhone X',
             'COD PRODUS: IPHONE X - HOCO SET HUSA + FOLIE
            Marca HOCO este un brand international de renume, care creaza huse de top de foarte buna calitate. Aceasta husa este realizata din material TPU premium importat din Germania si produs in Hong Kong',
-            89, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
-            $images,
+            89, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova", "Dolj",
+            [
+                'images/husa/1.jpg',
+                'images/husa/2.jpg',
+                'images/husa/3.jpg',
+                'images/husa/4.jpg',
+                'images/husa/5.jpg',
+                'images/husa/6.jpg',
+                'images/husa/7.jpg',
+                'images/husa/8.jpg',
+            ],
             SubCategory::TELEFOANE,
             ItemsType::ACCESORII_GSM,
             "", "", 0,
             false);
-        $images = [
-            'images/dacia1310/1.jpg',
-            'images/dacia1310/2.jpg',
-        ];
+
+
         sleep(2);
         //dacia 1310
         $this->addVehicleItem('Dacia 1310 cu I.T.P. valabil pentru tichet rabla 2019', "Merge ca atunci cand am luat-o",
-            1800, false, 1, 1,Category::AUTO_MOTO_NAUTICA, "Craiova",
-            $images,
+            1800, false, 1, 1, Category::AUTO_MOTO_NAUTICA, "Craiova", "Dolj",
+            [
+                'images/dacia1310/1.jpg',
+                'images/dacia1310/2.jpg',
+            ],
             SubCategory::AUTOTURISME,
             ItemsType::AUTOTURISM,
             "Dacia", "1310", 1990,
@@ -193,30 +197,22 @@ Suntem firma, nu negociem pretul si nu acceptam schimburi!!",
             "Fata", "Euro", "Galben", "Romania",
             "HGJLO348HHHKJF195", true, false, true,
             false, false);
-        $images = [
-            'images/rama/1.jpg',
-        ];
+
+
         sleep(2);
         //rama allview
         $this->addElectronicItem('Rama mijloc allview x4 soul mini',
             "Rama mijloc allview x4 soul mini Montaj 30 lei Transport in tara 20lei",
-            30, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
-            $images,
+            30, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova", "Dolj",
+            [
+                'images/rama/1.jpg',
+            ],
             SubCategory::TELEFOANE,
             ItemsType::ACCESORII_GSM,
             "Allview", "X4 Soul Mini", 0,
             false);
 
 
-        $images = [
-            'images/ford focus/1.jpg',
-            'images/ford focus/2.jpg',
-            'images/ford focus/3.jpg',
-            'images/ford focus/4.jpg',
-            'images/ford focus/5.jpg',
-            'images/ford focus/6.jpg',
-            'images/ford focus/7.jpg',
-        ];
         sleep(2);
         //ford focus
         $this->addVehicleItem('Ford Focus 2013', "ABS
@@ -257,8 +253,16 @@ Lumini de zi (LED)
 Oglinzi retrovizoare exterioare electrocromatice
 Pilot automat
 Senzori parcare fata-spate",
-            8600, true,  1, 1,Category::AUTO_MOTO_NAUTICA, "Sintesti, Bucuresti-Ilfov",
-            $images,
+            8600, true, 1, 1, Category::AUTO_MOTO_NAUTICA, 'Huși', "Vaslui",
+            [
+                'images/ford focus/1.jpg',
+                'images/ford focus/2.jpg',
+                'images/ford focus/3.jpg',
+                'images/ford focus/4.jpg',
+                'images/ford focus/5.jpg',
+                'images/ford focus/6.jpg',
+                'images/ford focus/7.jpg',
+            ],
             SubCategory::AUTOTURISME,
             ItemsType::AUTOTURISM,
             "Ford", "Focus MK3", 1990,
@@ -272,11 +276,6 @@ Senzori parcare fata-spate",
 //    *****************************************************************************
 
 
-        $images = [
-            'images/golf vii/1.jpg',
-            'images/golf vii/2.jpg',
-            'images/golf vii/3.jpg',
-        ];
         sleep(2);
         //golf
         $this->addVehicleItem('Volswagen Golf VII', "ABS
@@ -316,8 +315,12 @@ Senzori parcare fata-spate",
  Număr de locuri: 3 - 6
  Număr uşi: 4 sau 5
  Airbag: Airbag frontal, lateral şi altele",
-            15500, true, 1, 0,Category::AUTO_MOTO_NAUTICA, "Sibiu, Sibiu",
-            $images,
+            15500, true, 1, 0, Category::AUTO_MOTO_NAUTICA, 'Sibiu', 'Sibiu',
+            [
+                'images/golf vii/1.jpg',
+                'images/golf vii/2.jpg',
+                'images/golf vii/3.jpg',
+            ],
             SubCategory::AUTOTURISME,
             ItemsType::AUTOTURISM,
             "Volkswagen", "Golf VII", 2017,
@@ -328,11 +331,6 @@ Senzori parcare fata-spate",
             true, false);
 
 
-        $images = [
-            'images/pc gaming/1.jpg',
-            'images/pc gaming/2.jpg',
-            'images/pc gaming/3.jpg',
-        ];
         sleep(2);
         $this->addElectronicItem('Calculator Gaming Msi X470 Amd Ryzen 5 1600X Nou', "Pc Gaming Nou - toate componentele beneficiaza de garantie 2-3 ani la eMag , Pc Garage si Cel.ro.
 
@@ -375,8 +373,12 @@ Mouse gaming RGB ADATA XPG INFAREX M10 + Mousepad gaming RGB INFAREX R10 - Pret 
 Se accepta orice fel de teste/ proba pe raza judetului Brasov.
 
 ",
-            4000, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bals",
-            $images,
+            4000, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Balș", 'Olt',
+            [
+                'images/pc gaming/1.jpg',
+                'images/pc gaming/2.jpg',
+                'images/pc gaming/3.jpg',
+            ],
             SubCategory::LAPTOP_PC_PERIFERICE,
             ItemsType::SISTEME_PC,
             "", "", 0,
@@ -400,7 +402,7 @@ Se accepta orice fel de teste/ proba pe raza judetului Brasov.
         NU fac schimburi
         Livrare personala in Bucuresti.
         Trimit si in alte localitati prin curierat rapid.",
-            500, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova",
+            500, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Luduș", 'Mureș',
             ['images/monitor/1.jpg',
             ],
             SubCategory::LAPTOP_PC_PERIFERICE,
@@ -434,7 +436,7 @@ Se accepta orice fel de teste/ proba pe raza judetului Brasov.
        -Megadimension Neptunia VII
        -One Piece: Burning Blood
        -Rocket League",
-            1250, false, 1, 1, Category::ELECTONICE_ELECTROCASNICE, "Piatra Neamt, Neamt",
+            1250, false, 1, 1, Category::ELECTONICE_ELECTROCASNICE, "Piatra Neamt", "Neamt",
             ['images/ps4/1.jpg',
                 "images/ps4/2.jpg",
             ],
@@ -446,7 +448,7 @@ Se accepta orice fel de teste/ proba pe raza judetului Brasov.
         sleep(2);
         $this->addElectronicItem('Frigider mic',
             "Frigider mic de 80 cm adus din Germania în stare perfecta de funcționare",
-            350, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Resita, Caras-Severin",
+            350, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Resita", "Caras-Severin",
             ['images/frigider/1.jpg',
                 "images/frigider/2.jpg",
             ],
@@ -473,7 +475,7 @@ Se accepta orice fel de teste/ proba pe raza judetului Brasov.
         ORAR :
         L - V = 09.00 – 18.00.
         S = 09.00 – 14.00.",
-            550, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Timisoara, Timis",
+            550, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Timisoara", "Timis",
             ['images/spalat/1.jpg',
                 "images/spalat/2.jpg",
             ],
@@ -481,11 +483,14 @@ Se accepta orice fel de teste/ proba pe raza judetului Brasov.
             ItemsType::MASINI_DE_SPALAT,
             "", "", 2005,
             true);
+
+
         sleep(2);
         $this->addElectronicItem('Masina de cusut Singer.',
             "Vand masina de cusut Singer functionala.",
-            1000, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Giurgiu, Giurgiu",
-            ['images/cusut/1.jpg',
+            1000, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Giurgiu", "Giurgiu",
+            [
+                'images/cusut/1.jpg',
                 "images/cusut/2.jpg",
             ],
             SubCategory::ELECTROCASNICE,
@@ -577,7 +582,7 @@ Space gray - negru
 Detalii la telefon ! 
 Trimit in țara cu verificare colet ! 
 Ofer și cer seriozitate maxima !",
-            2800, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Targu Jiu, Gorj",
+            2800, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Targu Jiu", "Gorj",
             ['images/apple/1.jpg',
                 "images/apple/2.jpg",
                 "images/apple/3.jpg",
@@ -627,7 +632,7 @@ CARACTERISTICI GENERALE
 Dimensiuni (W x H x D)	160.3 x 111.5 x 8 mm
 Culoare	Negru
 Greutate	189 g.",
-            100, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti, Bucuresti-Ilfov",
+            100, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti", "Ilfov",
             ['images/er/1.jpg',
             ],
             SubCategory::TABLETE_EREADERE_GADGETURI,
@@ -642,8 +647,9 @@ Greutate	189 g.",
 
 L-am achizitionat in 2015 si de atunci mi-a fost cel mai bun prieten. Din cauza utilizarii, partea din stanga (unde sustineam palma) este un pic uzat. Veti vedea in poza. Altfel, functioneaza perfect. Am rulat atat Linux, cat si Windows pe el fara probleme.
 Intrucat am facut recent un upgrade, nu imi mai foloseste si de aceea e la vanzare",
-            1400, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti, Bucuresti-Ilfov",
-            ['images/lap/1.jpg',
+            1400, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti", "Ilfov",
+            [
+                'images/lap/1.jpg',
                 "images/lap/2.jpg",
             ],
             SubCategory::LAPTOP_PC_PERIFERICE,
@@ -663,7 +669,7 @@ http://web.canon.jp/imaging/eosd/eos5dm2/specifications.html
 - puteti vedea un clip filmat cu acest aparat + Samyang 35mm F1.4
 ( https://vimeo.com/243660123 )
 - il vand deoarece, am trecut la Panasonic si nu il mai folosesc de 1an..",
-            1900, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Brasov, Brasov",
+            1900, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Brasov", "Brasov",
             ['images/camera/1.jpg',
                 "images/camera/2.jpg",
             ],
@@ -680,8 +686,9 @@ Neverlocked, Full Box
 Telefon Personal, impecabil
 Telefon 10/10 
 Folie Nouă și Husa Cadou.",
-            1190, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Oradea, Bihor",
-            ['images/iph/1.jpg',
+            1190, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Oradea", "Bihor",
+            [
+                'images/iph/1.jpg',
                 "images/iph/2.jpg",
             ],
             SubCategory::TELEFOANE,
@@ -702,8 +709,9 @@ Stabilizator de imagine (trepte): 4.0
 Mecanism de actionare focalizare automata: USM
 Diametru filtru: 67mm
 Greutate: 515g",
-            1990, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Arad, Arad",
-            ['images/ob/1.jpg',
+            1990, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Arad", "Arad",
+            [
+                'images/ob/1.jpg',
                 "images/ob/2.jpg",
             ],
             SubCategory::TV_AUDIO_FOTO_VIDEO,
@@ -731,8 +739,9 @@ Radiator - 40 lei
 WebCam - 30 lei
 Cablu ecran (LVDS) - 60 lei
 Diverse Cabluri si mufe - depinde.",
-            45, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova, Dolj",
-            ['images/dezmb/1.jpg',
+            45, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova", "Dolj",
+            [
+                'images/dezmb/1.jpg',
             ],
             SubCategory::LAPTOP_PC_PERIFERICE,
             ItemsType::LAPTOP,
@@ -756,8 +765,9 @@ Diverse Cabluri si mufe - depinde.",
         Etc.....
 
         Procesoarele sunt testate si sunt in stare buna de functionare!",
-            40, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bals, Olt",
-            ['images/cpu/1.jpg',
+            40, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Balș", "Olt",
+            [
+                'images/cpu/1.jpg',
             ],
             SubCategory::LAPTOP_PC_PERIFERICE,
             ItemsType::COMPONENTE_ACCESORII,
@@ -777,8 +787,9 @@ Receptor: lemn si plastic
 Produsul este nou, sigilat.
 
 Pretul NU este negociabil.",
-            180, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti, Bucuresti-Ilfov",
-            ['images/old/1.jpg',
+            180, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti", "Ilfov",
+            [
+                'images/old/1.jpg',
                 "images/old/2.jpg",
             ],
             SubCategory::TELEFOANE,
@@ -794,8 +805,9 @@ Ofer cadou carcasa originala apple.
 Telefonul a fost tinut mereu in husa si cu folie de sticla.
 
 ",
-            1000, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Baia Mare, Maramures",
-            ['images/6s/1.jpg',
+            1000, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Baia Mare", "Maramureș",
+            [
+                'images/6s/1.jpg',
                 "images/6s/2.jpg",
             ],
             SubCategory::TELEFOANE,
@@ -822,8 +834,9 @@ Gama Gateway Series: Gateway NS51 , NV47H , NV49 , NV50A , NV51B , NV55C , NV57H
 Packard Bell : EasyNote TM, LM81
 
 ",
-            100, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Timisoara, Timis",
-            ['images/bat/1.jpg',
+            100, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Timisoara", "Timiș",
+            [
+                'images/bat/1.jpg',
             ],
             SubCategory::LAPTOP_PC_PERIFERICE,
             ItemsType::LAPTOP,
@@ -835,8 +848,9 @@ Packard Bell : EasyNote TM, LM81
             "Are 4 arzatoare pe gaz aprindere electrica si cuptoful este electric aragazul este aproape nou cumparet in august 2018, este inca in garantie ,este bine intretinut nu este defect functioneaza foarte bine, pretul este negociabil
 
 ",
-            800, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Resita, Caras-Severin",
-            ['images/aragaz/1.jpg',
+            800, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Reșța", "Caraș-Severin",
+            [
+                'images/aragaz/1.jpg',
                 "images/aragaz/2.jpg",
             ],
             SubCategory::ELECTROCASNICE,
@@ -847,8 +861,9 @@ Packard Bell : EasyNote TM, LM81
         sleep(2);
         $this->addElectronicItem('Router Huawei',
             "Ruter Huawei Model HG 658 perfect funcțional rog și ofer seriozitate",
-            90, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti, Bucuresti-Ilfov",
-            ['images/router/1.jpg',
+            90, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti", "Ilfov",
+            [
+                'images/router/1.jpg',
                 "images/router/2.jpg",
             ],
             SubCategory::LAPTOP_PC_PERIFERICE,
@@ -879,8 +894,9 @@ Tip: 2.4GHz wireless
 Tehnologie fără fir: 2.4GHz
 
 Fii sociabil, ",
-            50, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Brad, Hunedoara",
-            ['images/mouse/1.jpg',
+            50, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Brad", "Hunedoara",
+            [
+                'images/mouse/1.jpg',
                 "images/mouse/2.jpg",
             ],
             SubCategory::LAPTOP_PC_PERIFERICE,
@@ -896,8 +912,9 @@ Fii sociabil, ",
 Ofer garantie 48 de ore pentru efectuarea oricaror teste.
 
 Nu ma intereseaza schimburi.",
-            400, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti, Bucuresti-Ilfov",
-            ['images/tast/1.jpg',
+            400, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "București", "Ilfov",
+            [
+                'images/tast/1.jpg',
                 "images/tast/2.jpg",
             ],
             SubCategory::LAPTOP_PC_PERIFERICE,
@@ -921,8 +938,9 @@ TINTOM SERVICE
 Laptop - Notebook - Tablete - Telefoane GSM 
 Smartphone - Gps - Calculatoare - Statii CB tir
 Transport 30lei dus-intors pentru produsele trimise de dvs catre noi la reparat.",
-            25, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Iasi, Iasi",
-            ['images/s7/1.jpg',
+            25, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Iași", "Iași",
+            [
+                'images/s7/1.jpg',
                 "images/s7/2.jpg",
             ],
             SubCategory::TELEFOANE,
@@ -934,8 +952,9 @@ Transport 30lei dus-intors pentru produsele trimise de dvs catre noi la reparat.
         sleep(2);
         $this->addElectronicItem('Webcam Logitech C920, FullHD 1080P',
             "Webcam Logitech C920, FullHD 1080p, 15 MP, Autofocus, 2 microfoane in perfecta stare de functionare.",
-            250, false, 0,0, Category::ELECTONICE_ELECTROCASNICE, "Craiova, Dolj",
-            [ 'images/web/1.jpg',
+            250, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Craiova", "Dolj",
+            [
+                'images/web/1.jpg',
                 "images/web/2.jpg",
             ],
             SubCategory::LAPTOP_PC_PERIFERICE,
@@ -943,7 +962,7 @@ Transport 30lei dus-intors pentru produsele trimise de dvs catre noi la reparat.
             "Logitech", "C920", 2017,
             true);
 
-          sleep(2);
+        sleep(2);
         $this->addElectronicItem('Logitech G635 2019, Surround 7.1 Casti GAMING RGB - DTS 2.0',
             "CASTILE SUNT NOI, IN CUTIE, SIGILATE, LUATE LA PRECOMANDA. NU ACCEPT SCHIMBURI
 
@@ -954,8 +973,8 @@ TECHNICAL SPECIFICATIONS Headphone Driver: 50 mm Frequency response: 20 Hz-20 KH
 MULTE DETALII PE https://www.logitechg.com/en-roeu/products/gaming-audio/g635-7-1-surround-sound-gaming-headset.html
 
 ",
-            400, false, 0,0, Category::ELECTONICE_ELECTROCASNICE, "Bucuresti, Bucuresti-Ilfov   ",
-            [ 'images/casti/1.jpg',
+            400, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "București", "Ilfov",
+            ['images/casti/1.jpg',
                 "images/casti/2.jpg",
             ],
             SubCategory::LAPTOP_PC_PERIFERICE,
@@ -975,8 +994,9 @@ Standard: UHS-I U1
 Viteza maxima de citire: 80 Mb/secunda 
 Viteza maxima de scriere: 10 Mb/secunda 
 Alte informatii: Rezistent la apa , socuri si vibratii , raze X , rezistent la temperaturi extreme .Mărci:Eaget, Mingsford,hama,mixha,alfawise,etc.10 buc disponibile .Transport 15 lei",
-            40, false, 0,0, Category::ELECTONICE_ELECTROCASNICE, "Brad, Hunedoara",
-            [ 'images/card/1.jpg',
+            40, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Brad", "Hunedoara",
+            [
+                'images/card/1.jpg',
                 "images/card/2.jpg",
             ],
             SubCategory::LAPTOP_PC_PERIFERICE,
@@ -995,8 +1015,9 @@ Volanul are padele
 Se poate atasa atat la PS4 cat si la PC .
 Fara schimburi 
 Pret absolut fix !",
-            900, false, 0,0, Category::ELECTONICE_ELECTROCASNICE, "Timisoara, Timis",
-            [ 'images/volan/1.jpg',
+            900, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Timișoara", "Timiș",
+            [
+                'images/volan/1.jpg',
                 "images/volan/2.jpg",
             ],
             SubCategory::JOCURI_CONSOLE,
@@ -1025,8 +1046,9 @@ Pret absolut fix !",
 - CD mp3
 - SISTEM DE LUMINI IN DIVERSE VARIANTE DE ILUMINARE, INCLUSIV SINCRONIZARE DUPA LINIA MELODICA.
 - SUNET FOARTE CLAR, FOARTE PUTERNIC",
-            5000, false, 0,0, Category::ELECTONICE_ELECTROCASNICE, "Galati, Galati",
-            [ 'images/boxe/1.jpg',
+            5000, false, 0, 0, Category::ELECTONICE_ELECTROCASNICE, "Galați", "Galați",
+            [
+                'images/boxe/1.jpg',
                 "images/boxe/2.jpg",
             ],
             SubCategory::TV_AUDIO_FOTO_VIDEO,
@@ -1038,8 +1060,9 @@ Pret absolut fix !",
         sleep(2);
         $this->addElectronicItem('Robot de bucătărie, Storcător fructe Sybilla 2 nou',
             "Storcator de fructe Sybilla 2 nou, sigilat, negociabil, dacă doriti să facă ulei de floarea soarelui, se poate, chiar și înghetată face, numai dacă doriți să separați pulpa de suc..",
-            2500, false, 1,0, Category::ELECTONICE_ELECTROCASNICE, "Focsani, Vrancea",
-            [ 'images/storc/1.jpg',
+            2500, false, 1, 0, Category::ELECTONICE_ELECTROCASNICE, "Focșani", "Vrancea",
+            [
+                'images/storc/1.jpg',
                 "images/storc/2.jpg",
             ],
             SubCategory::ELECTROCASNICE,
@@ -1049,7 +1072,7 @@ Pret absolut fix !",
     }
 
 
-    private function addItem($title, $description, $price, $currency, $negotiable, $schimb, $category, $location, $images)
+    private function addItem($title, $description, $price, $currency, $negotiable, $change, $category, $sub_category, $type, $city, $district, $images)
     {
         $item = new Item();
         $item->title = $title;
@@ -1058,9 +1081,13 @@ Pret absolut fix !",
         $item->price = $price;
         $item->currency = $currency;
         $item->negotiable = $negotiable;
-        $item->change = $schimb;
+        $item->change = $change;
         $item->category = $category;
-        $item->location = $location;
+        $item->sub_category = $sub_category;
+        $item->item_type = $type;
+//        $item->location = $location;
+        $item->city = $city;
+        $item->district = $district;
         $item->status = Item::STATUS_ACTIVE;
         $user = User::orderByRaw("RAND()")->first();
         $item->owner = $user->id;
@@ -1075,14 +1102,12 @@ Pret absolut fix !",
         return $item->item_id;
     }
 
-    private function addVehicleItem($title, $description, $price, $currency, $negotiable, $schimb, $category, $location, $images, $sub_category, $type, $manufacturer, $model, $manufacturer_year, $engine, $power, $gearbox,
+    private function addVehicleItem($title, $description, $price, $currency, $negotiable, $change, $category, $city, $district, $images, $sub_category, $type, $manufacturer, $model, $manufacturer_year, $engine, $power, $gearbox,
                                     $body, $fuel_type, $mileage, $drive, $emission_class, $color, $origin, $VIN,
                                     $used, $pollution_tax, $damaged, $first_owner, $right_hand_drive)
     {
         $vehicle = new Vehicle();
-        $vehicle->item_id = $this->addItem($title, $description, $price, $currency, $negotiable, $schimb, $category, $location, $images);
-        $vehicle->sub_category = $sub_category;
-        $vehicle->item_type = $type;
+        $vehicle->item_id = $this->addItem($title, $description, $price, $currency, $negotiable, $change, $category, $sub_category, $type, $city, $district, $images);
         $vehicle->manufacturer = $manufacturer;
         $vehicle->model = $model;
         $vehicle->manufacturer_year = $manufacturer_year;
@@ -1105,12 +1130,10 @@ Pret absolut fix !",
         $vehicle->save();
     }
 
-    private function addElectronicItem($title, $description, $price, $currency, $negotiable, $schimb, $category, $location, $images, $sub_category, $type, $manufacturer, $model, $manufacturer_year, $used)
+    private function addElectronicItem($title, $description, $price, $currency, $negotiable, $change, $category, $city, $district, $images, $sub_category, $type, $manufacturer, $model, $manufacturer_year, $used)
     {
         $electronic = new Electronic();
-        $electronic->item_id = $this->addItem($title, $description, $price, $currency, $negotiable, $schimb, $category, $location, $images);
-        $electronic->sub_category = $sub_category;
-        $electronic->item_type = $type;
+        $electronic->item_id = $this->addItem($title, $description, $price, $currency, $negotiable, $change, $category, $sub_category, $type, $city, $district, $images);
         $electronic->manufacturer = $manufacturer;
         $electronic->model = $model;
         $electronic->manufacturer_year = $manufacturer_year;
