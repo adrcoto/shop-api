@@ -21,16 +21,19 @@ use Illuminate\Support\Facades\DB;
 class FavoriteController extends Controller
 {
 
-    public function get()
+    public function get(Request $request)
     {
         try {
+            $perPage = $request->perPage;
             $user = $this->validateSession();
 
             $requestedItems = DB::table('items')
                 ->join('favorites', 'items.item_id', '=', 'favorites.item')
-                ->where('favorites.user', '=', $user->id)->orderBy('favorites.created_at')->get();
+                ->where('favorites.user', '=', $user->id)
+                ->orderBy('favorites.created_at')
+                ->paginate($perPage);
 
-            return $this->returnSuccess(Util::buildItems($requestedItems));
+            return $this->returnSuccess(['items' => Util::buildItems($requestedItems), 'total' => $requestedItems->total()]);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }

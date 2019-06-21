@@ -21,8 +21,8 @@ class CreateFavoritesTable extends Migration
         });
 
         Schema::table('favorites', function ($table){
-            $table->foreign('item')->references('item_id')->on('items');
-            $table->foreign('user')->references('id')->on('users');
+            $table->foreign('item')->references('item_id')->on('items')->onDelete('cascade');
+            $table->foreign('user')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

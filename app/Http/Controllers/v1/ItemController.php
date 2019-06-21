@@ -32,13 +32,17 @@ class ItemController extends Controller
 {
 
 
-    public function get()
+    public function get(Request $request)
     {
         try {
-            $user = $this->validateSession();
-            $items = Item::where('owner', $user->id)->get();
+            $perPage = $request->perPage;
 
-            return $this->returnSuccess(Util::buildItems($items));
+            $user = $this->validateSession();
+            $items = Item::where('owner', $user->id)
+                ->orderBy('created_at')
+                ->paginate($perPage);
+
+            return $this->returnSuccess(['items' => Util::buildItems($items), 'total' => $items->total()]);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
@@ -637,168 +641,8 @@ class ItemController extends Controller
     public function test(Request $request)
     {
         try {
-            $filters = [];
 
-            if ($request->has('q')) {
-                $filters = Arr::add($filters, 'q', $request->q);
-            }
-
-            if ($request->has('city')) {
-                $filters = Arr::add($filters, 'city', $request->city);
-            }
-            if ($request->has('district')) {
-                $filters = Arr::add($filters, 'district', $request->district);
-            }
-            if ($request->has('category')) {
-                $filters = Arr::add($filters, 'category', $request->category);
-            }
-            if ($request->has('sub_category')) {
-                $filters = Arr::add($filters, 'sub_category', $request->sub_category);
-            }
-
-
-            if ($request->has('q')) {
-                $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(15);
-
-                // q + city
-                if ($request->has('city')) {
-                    $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
-                        ->where('items.city', '=', $request->city)
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(15);
-                    if ($request->has('district')) {
-                        $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
-                            ->where('items.city', '=', $request->city)
-                            ->where('items.district', '=', $request->district)
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(15);
-                        if ($request->has('category')) {
-                            $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
-                                ->where('items.city', '=', $request->city)
-                                ->where('items.district', '=', $request->district)
-                                ->where('items.category', '=', $request->category)
-                                ->orderBy('created_at', 'desc')
-                                ->paginate(15);
-
-                            if ($request->has('sub_category')) {
-                                $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
-                                    ->where('items.city', '=', $request->city)
-                                    ->where('items.district', '=', $request->district)
-                                    ->where('items.category', '=', $request->category)
-                                    ->where('items.sub_category', '=', $request->sub_category)
-                                    ->orderBy('created_at', 'desc')
-                                    ->paginate(15);
-                            }
-                        }
-                    } //ends if has city
-                } else if ($request->has('district')) {
-                    $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
-                        ->where('items.district', '=', $request->district)
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(15);
-
-                    if ($request->has('category')) {
-                        $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
-                            ->where('items.district', '=', $request->district)
-                            ->where('items.category', '=', $request->category)
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(15);
-                        if ($request->has('sub_category')) {
-                            $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
-                                ->where('items.district', '=', $request->district)
-                                ->where('items.category', '=', $request->category)
-                                ->where('items.sub_category', '=', $request->sub_category)
-                                ->orderBy('created_at', 'desc')
-                                ->paginate(15);
-                        }
-                    }
-                } else if ($request->has('category')) {
-                    $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
-                        ->where('items.category', '=', $request->category)
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(15);
-
-                    if ($request->has('sub_category')) {
-                        $itemsToBuild = Item::where('items.title', 'LIKE', '%' . $request->q . '%')
-                            ->where('items.category', '=', $request->category)
-                            ->where('items.sub_category', '=', $request->sub_category)
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(15);
-                    }
-                }
-            } else if ($request->has('city')) {
-                $itemsToBuild = Item::where('items.city', '=', $request->city)
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(15);
-                if ($request->has('district')) {
-                    $itemsToBuild = Item::where('items.city', '=', $request->city)
-                        ->where('items.district', '=', $request->district)
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(15);
-                    if ($request->has('category')) {
-                        $itemsToBuild = Item::where('items.city', '=', $request->city)
-                            ->where('items.district', '=', $request->district)
-                            ->where('items.category', '=', $request->category)
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(15);
-
-                        if ($request->has('sub_category')) {
-                            $itemsToBuild = Item::where('items.city', '=', $request->city)
-                                ->where('items.district', '=', $request->district)
-                                ->where('items.category', '=', $request->category)
-                                ->where('items.sub_category', '=', $request->sub_category)
-                                ->orderBy('created_at', 'desc')
-                                ->paginate(15);
-                        }
-                    }
-                } //ends if has district
-                else if ($request->has('category')) {
-                    $itemsToBuild = Item::where('items.city', '=', $request->city)
-                        ->where('items.category', '=', $request->category)
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(15);
-                    if ($request->has('sub_category')) {
-                        $itemsToBuild = Item::where('items.city', '=', $request->city)
-                            ->where('items.category', '=', $request->category)
-                            ->where('items.sub_category', '=', $request->sub_category)
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(15);
-                    }
-                }
-            } else if ($request->has('district')) {
-                $itemsToBuild = Item::where('items.district', '=', $request->district)
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(15);
-                if ($request->has('category')) {
-                    $itemsToBuild = Item::where('items.district', '=', $request->district)
-                        ->where('items.category', '=', $request->category)
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(15);
-                    if ($request->has('sub_category')) {
-                        $itemsToBuild = Item::where('items.district', '=', $request->district)
-                            ->where('items.category', '=', $request->category)
-                            ->where('items.sub_category', '=', $request->sub_category)
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(15);
-                    }
-                }
-            } else if ($request->has('category')) {
-                $itemsToBuild = Item::where('items.category', '=', $request->category)
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(15);
-                if ($request->has('sub_category')) {
-                    $itemsToBuild = Item::where('items.category', '=', $request->category)
-                        ->where('items.sub_category', '=', $request->sub_category)
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(15);
-                }
-            } else
-                $itemsToBuild = Item::orderBy('created_at', 'desc')->paginate(15);
-
-
-            return $this->returnSuccess(['items' => Util::buildItems($itemsToBuild), 'total' => $itemsToBuild->total()]);
+            return $this->returnSuccess();
         } catch
         (\Exception $e) {
             return $this->returnError($e->getMessage());

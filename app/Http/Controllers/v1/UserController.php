@@ -204,10 +204,16 @@ class UserController extends Controller
                 'email' => 'required|email|exists:users'
             ];
 
-            $validator = Validator::make($request->all(), $rules);
+            $messages = [
+                'email.required' => 'Introduceți o adresă de e-mail',
+                'email.email' => 'Adresa de e-mail trebuie să fie validă',
+                'email.exists' => 'Nu există nici un cont asociat adresei de e-mail introdusă',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
 
             if (!$validator->passes()) {
-                return $this->returnBadRequest('Please fill all required fields');
+                return $this->returnError($validator->errors()->first());
             }
 
             $user = $userModel::where('email', $request->email)->first();
@@ -216,9 +222,12 @@ class UserController extends Controller
             $user->save();
 
             $emailService = new EmailService();
-            $emailService->sendForgotPassword($user);
+            if ($request->has('change'))
+                $emailService->sendChangePassword($user);
+            else
+                $emailService->sendForgotPassword($user);
 
-            return $this->returnSuccess();
+            return $this->returnSuccess($request->all());
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
@@ -235,21 +244,29 @@ class UserController extends Controller
     {
         try {
             $rules = [
-                'email' => 'required|email|exists:users',
-                'code' => 'required',
-                'password' => 'required'
+                'email' => 'bail|required|email|exists:users',
+                'code' => 'bail|required',
+                'password' => 'bail|required|min:6',
             ];
 
-            $validator = Validator::make($request->all(), $rules);
+            $messages = [
+                'email.required' => 'Introduceți o adresă de e-mail',
+                'email.email' => 'Adresa de e-mail trebuie să fie validă',
+                'code.required' => 'Introduceți codul trimis pe e-mail',
+                'password.required' => 'Introduceți o nouă parolă',
+                'password.min' => 'Parola trebuie să conțină minim 6 caractere'
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
 
             if (!$validator->passes()) {
-                return $this->returnBadRequest('Please fill all required fields');
+                return $this->returnError($validator->errors()->first());
             }
 
             $user = $userModel::where('email', $request->email)->where('forgot_code', $request->code)->get()->first();
 
             if (!$user) {
-                $this->returnNotFound('Code is not valid');
+                return $this->returnNotFound('Codul nu este valid');
             }
 
             $user->password = Hash::make($request->password);
@@ -257,7 +274,7 @@ class UserController extends Controller
 
             $user->save();
 
-            return $this->returnSuccess();
+            return $this->returnSuccess($request->all());
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
@@ -315,7 +332,7 @@ class UserController extends Controller
     public function updateAvatar(Request $request)
     {
 
-        try  {
+        try {
 
             $rules = [
                 'avatar' => 'required|image',
@@ -334,16 +351,15 @@ class UserController extends Controller
             $user = $this->validateSession();
 
 
-
             if ($request->has('avatar')) {
 
-         /*        if ($user->avatar == null) {
-                     $user->avatar = $request->avatar->store('avatars', 'public');
-                 } else {
-                     Storage::disk('public')->delete($user->avatar);
+                /*        if ($user->avatar == null) {
+                            $user->avatar = $request->avatar->store('avatars', 'public');
+                        } else {
+                            Storage::disk('public')->delete($user->avatar);
 
-                     $user->avatar = $request->avatar->store('avatars', 'public');
-                 }*/
+                            $user->avatar = $request->avatar->store('avatars', 'public');
+                        }*/
 
                 $baseService = new BaseService();
 
@@ -352,7 +368,6 @@ class UserController extends Controller
                 $generatedPictureName = str_replace(' ', '_', $user->name) . '_' . time() . '.' . $pictureExtension;
                 $path = 'storage/users/';
                 File::makeDirectory($path, 0777, true, true);
-
 
 
                 if ($user->avatar == null) {

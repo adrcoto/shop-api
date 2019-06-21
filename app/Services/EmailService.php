@@ -21,7 +21,21 @@ class EmailService
     {
         Mail::send('emails.forgot', ['user' => $user], function ($message) use ($user) {
             $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
-            $message->subject(env('MAIL_APP_NAME'). ' - Forgot password code');
+            $message->subject(env('MAIL_APP_NAME') . ' - Forgot password code');
+
+            $message->to($user->email);
+        });
+    }
+
+    /**
+     * Send code on email for change password
+     * @param User $user
+     */
+    public function sendChangePassword(User $user)
+    {
+        Mail::send('emails.change', ['user' => $user], function ($message) use ($user) {
+            $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+            $message->subject(env('MAIL_APP_NAME') . ' - Forgot password code');
 
             $message->to($user->email);
         });
@@ -32,13 +46,16 @@ class EmailService
      * @param User $user
      * @param string $url
      */
-    public function sendVerifyAccount(User $user, string $url){
-        Mail::send('emails.verify', ['user' => $user, 'url' => $url], function($message) use ($user){
+    public function sendVerifyAccount(User $user, string $url)
+    {
+        Mail::send('emails.verify', ['user' => $user, 'url' => $url], function ($message) use ($user) {
             $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
-            $message->subject(env('MAIL_APP_NAME'). ' - Verify your account');
+            $message->subject(env('MAIL_APP_NAME') . ' - Verify your account');
 
             $message->to($user->email);
         });
     }
+
+
 
 }
