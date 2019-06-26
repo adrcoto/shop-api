@@ -44,7 +44,7 @@ class CreateItemsTable extends Migration
             $table->foreign('sub_category')->references('id')->on('sub_categories')->onDelete('cascade');;
             $table->foreign('item_type')->references('id')->on('items_types')->onDelete('cascade');;
 
-            $table->foreign('owner')->references('id')->on('users')->onDelete('cascade')->onDelete('cascade');;
+            $table->foreign('owner')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
