@@ -242,15 +242,13 @@ class ItemController extends Controller
     {
         try {
 
-            $requestedItems = Item::where('owner', $id)->get();
+            $requestedItems = Item::where('owner', $id)->orderBy('created_at', 'descr')->paginate(7);
 
             if (!$requestedItems)
-                return $this->returnBadRequest('Utilizatorul mai are alte anunțuri');
-
-            $items = Util::buildItems($requestedItems);
+                return $this->returnBadRequest('Utilizatorul nu mai are alte anunțuri');
 
 
-            return $this->returnSuccess($items);
+            return $this->returnSuccess(['items' => Util::buildItems($requestedItems), 'total' => $requestedItems->total()]);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
