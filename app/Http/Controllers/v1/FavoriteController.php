@@ -55,7 +55,7 @@ class FavoriteController extends Controller
             $alreadyFavorite = Favorite::where('item', $request->item)->where('user', $user->id)->first();
 
             if ($alreadyFavorite)
-                return $this->returnError('Anunțul este deja in lista de anuțuri favorite');
+                return $this->returnError('favorite.already');
 
             $favorite = new Favorite();
 
@@ -76,10 +76,10 @@ class FavoriteController extends Controller
             $favorite = Favorite::where('item', $id)->where('user', $user->id)->first();
 
             if (!$favorite)
-                return $this->returnNotFound('Anunțul nu a putut fi găsit');
+                return $this->returnNotFound('item.404');
 
             if ($user->id != $favorite->user)
-                return $this->returnError('Nu aveți permisiunea pentru a șterge acest anunț');
+                return $this->returnError('item.delete.403');
 
             $favorite->delete();
 

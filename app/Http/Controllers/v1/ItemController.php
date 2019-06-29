@@ -16,12 +16,10 @@ use App\Util;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Arr;
 
 /**
  * Class ItemController
@@ -32,6 +30,11 @@ class ItemController extends Controller
 {
 
 
+    /**
+     * Get logged user's items
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function get(Request $request)
     {
         try {
@@ -42,12 +45,14 @@ class ItemController extends Controller
                 ->orderBy('created_at')
                 ->paginate($perPage);
 
+            if (!$items)
+                return $this->returnNotFound();
+
             return $this->returnSuccess(['items' => Util::buildItems($items), 'total' => $items->total()]);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
     }
-
 
     /**
      * Search for items
@@ -202,27 +207,46 @@ class ItemController extends Controller
                 $itemsToBuild = Item::orderBy('created_at', 'desc')->paginate($perPage);
 
 
+            if (!$itemsToBuild)
+                return $this->returnNotFound();
+
+
             return $this->returnSuccess(['items' => Util::buildItems($itemsToBuild), 'total' => $itemsToBuild->total()]);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
     }
 
-    /***
+    /**
      * Gets one item
+     * @param Request $request
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getItem($id)
+    public function getItem(Request $request, $id)
     {
         try {
-            $requestedItem = Item::find($id);
+            $rules = [
+                'slug' => 'required'
+            ];
+
+            $messages = [
+                'slug.required' => 'slug',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if (!$validator->passes()) {
+                return $this->returnError($validator->errors()->first());
+            }
+
+            $requestedItem = Item::where('item_id', $id)->where('slug', $request->slug)->first();
 
             $tempItem = new Collection();
             $tempItem->push($requestedItem);
 
             if (!$requestedItem)
-                return $this->returnBadRequest('Anunțul nu a fost găsit');
+                return $this->returnNotFound('item.404');
 
 
             $item = Util::buildItems($tempItem)[0];
@@ -232,12 +256,18 @@ class ItemController extends Controller
             $item->sub_category_name = SubCategory::find($item->sub_category)->name;
             $item->item_type_name = ItemsType::find($item->item_type)->name;
 
+
             return $this->returnSuccess(['item' => $item, 'user' => $user]);
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
     }
 
+    /**
+     * Get others user's  items
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getUsersItems($id)
     {
         try {
@@ -245,8 +275,7 @@ class ItemController extends Controller
             $requestedItems = Item::where('owner', $id)->orderBy('created_at', 'descr')->paginate(7);
 
             if (!$requestedItems)
-                return $this->returnBadRequest('Utilizatorul nu mai are alte anunțuri');
-
+                return $this->returnNotFound();
 
             return $this->returnSuccess(['items' => Util::buildItems($requestedItems), 'total' => $requestedItems->total()]);
         } catch (\Exception $e) {
@@ -272,33 +301,32 @@ class ItemController extends Controller
                 'category' => 'bail|required|exists:categories,id',
                 'sub_category' => 'bail|required|exists:sub_categories,id',
                 'type' => 'bail|required|exists:items_types,id',
-//                'location' => 'required',
                 'city' => 'required',
                 'district' => 'required',
             ];
 
-            $message = [
-                'title.required' => 'Introduceți un titlu',
-                'title.max' => 'Titlul este prea lung',
-                'description.required' => 'Descrierea anunțului este obligatorie',
-                'description.max' => 'Descrierea este prea lungă',
-                'price.required' => 'Introduceți un preț',
-                'price.min' => 'Introduceți un preț valid',
-                'currency.required' => 'Alegeți una dintre cele doua monezi disponibile',
-                'currency.min' => 'Alegeți una dintre cele doua monezi disponibile',
-                'currency.max' => 'Alegeți una dintre cele doua monezi disponibile',
-                'category.required' => 'Alegeți o categorie',
-                'category.exists' => 'Categorie invalidă',
-                'sub.required' => 'Alegeți o categorie',
-                'sub_category.exists' => 'Categorie invalidă',
-                'type.required' => 'Alegeți un tip',
-                'type.exists' => 'Tip invalid',
-//                'location.required' => 'Alegeți o locație',
-                'city.required' => 'Alegeți o locație',
-                'district.required' => 'Alegeți o locație',
+
+            $messages = [
+                'title.required' => 'title',
+                'title.max' => 'title.max',
+                'description.required' => 'description',
+                'description.max' => 'description.max',
+                'price.required' => 'price',
+                'price.min' => 'price.min',
+                'currency.required' => 'currency',
+                'currency.min' => 'currency',
+                'currency.max' => 'currency',
+                'category.required' => 'category',
+                'sub_category.required' => 'category',
+                'category.exists' => 'category.exists',
+                'sub_category.exists' => 'category.exists',
+                'type.required' => 'type.required',
+                'type.exists' => 'type.exists',
+                'city.required' => 'location',
+                'district.required' => 'location',
             ];
 
-            $validator = Validator::make($request->all(), $rules, $message);
+            $validator = Validator::make($request->all(), $rules, $messages);
 
             if (!$validator->passes())
                 return $this->returnBadRequest($validator->errors()->first());
@@ -332,7 +360,6 @@ class ItemController extends Controller
             $item->category = $category;
             $item->sub_category = $sub_category;
             $item->item_type = $type;
-//            $item->location = $request->location;
             $item->city = $request->city;
             $item->district = $request->district;
             $item->status = Item::STATUS_ACTIVE;
@@ -348,7 +375,6 @@ class ItemController extends Controller
                         $electronic = new Electronic();
 
                         $electronic->item_id = $item->item_id;
-
 
                         if ($request->has('manufacturer')) $electronic->manufacturer = $request->manufacturer;
 
@@ -458,22 +484,22 @@ class ItemController extends Controller
                 'type' => 'bail|required|exists:items_types,id',
             ];
 
-            $message = [
 
-                'title.max' => 'Titlul este prea lung',
-                'description.max' => 'Descrierea este prea lungă',
-                'price.min' => 'Introduceți un preț valid',
-                'currency.min' => 'Alegeți una dintre cele doua monezi disponibile',
-                'currency.max' => 'Alegeți una dintre cele doua monezi disponibile',
-                'category.required' => 'Alegeți o categorie',
-                'category.exists' => 'Categorie invalidă',
-                'sub.required' => 'Alegeți o categorie',
-                'sub_category.exists' => 'Categorie invalidă',
-                'type.required' => 'Alegeți un tip',
-                'type.exists' => 'Tip invalid',
+            $messages = [
+                'title.max' => 'title.max',
+                'description.max' => 'description.max',
+                'price.min' => 'price.min',
+                'currency.min' => 'currency',
+                'currency.max' => 'currency',
+                'category.required' => 'category',
+                'sub_category.required' => 'category',
+                'category.exists' => 'category.exists',
+                'sub_category.exists' => 'category.exists',
+                'type.required' => 'type.required',
+                'type.exists' => 'type.exists',
             ];
 
-            $validator = Validator::make($request->all(), $rules, $message);
+            $validator = Validator::make($request->all(), $rules, $messages);
 
             if (!$validator->passes()) return $this->returnBadRequest($validator->errors()->first());
 
@@ -615,7 +641,7 @@ class ItemController extends Controller
             if (!$item) return $this->returnBadRequest('Item not found');
 
             if ($user->role_id === Role::ROLE_USER && $user->id !== $item->owner)
-                return $this->returnError('Nu aveți drepturile necesare pentru a șterge acest anunț');
+                return $this->returnError('item.delete.403');
 
             $images = ItemsImage::where('item_id', $id)->get();
 
@@ -652,72 +678,4 @@ class ItemController extends Controller
      * @param $data
      * @return mixed
      */
-    public function buildItems($data)
-    {
-        $items = new Collection();
-        foreach ($data as $itemToBuild) {
-            $itemBuilt = new \stdClass();
-            $cat = $itemToBuild->category;
-
-            $itemBuilt->item_id = $itemToBuild->item_id;
-            $itemBuilt->title = $itemToBuild->title;
-            $itemBuilt->slug = $itemToBuild->slug;
-            $itemBuilt->description = $itemToBuild->description;
-            $itemBuilt->price = $itemToBuild->price;
-            $itemBuilt->currency = $itemToBuild->currency;
-            $itemBuilt->negotiable = $itemToBuild->negotiable;
-            $itemBuilt->change = $itemToBuild->change;
-            $itemBuilt->category = $itemToBuild->category;
-            $itemBuilt->location = $itemToBuild->location;
-            $itemBuilt->status = $itemToBuild->status;
-            $itemBuilt->owner = $itemToBuild->owner;
-            $itemBuilt->created_at = $itemToBuild->created_at;
-            $itemBuilt->updated_at = $itemToBuild->updated_at;
-
-            $itemBuilt->images = DB::table('items_images')->where('item_id', '=', $itemBuilt->item_id)->get();
-
-            if ($cat == Category::ELECTONICE_ELECTROCASNICE) {
-                $electronic = Electronic::find($itemToBuild->item_id);
-
-                $itemBuilt->sub_category = $electronic->sub_category;
-                $itemBuilt->item_type = $electronic->item_type;
-
-                $itemBuilt->manufacturer = $electronic->manufacturer;
-                $itemBuilt->model = $electronic->model;
-                $itemBuilt->manufacturer_year = $electronic->manufacturer_year;
-                $itemBuilt->used = $electronic->used;
-            } else {
-                $vehicle = Vehicle::find($itemToBuild->item_id);
-
-                $itemBuilt->sub_category = $vehicle->sub_category;
-                $itemBuilt->item_type = $vehicle->item_type;
-
-                $itemBuilt->manufacturer = $vehicle->manufacturer;
-                $itemBuilt->model = $vehicle->model;
-                $itemBuilt->manufacturer_year = $vehicle->manufacturer_year;
-                $itemBuilt->engine = $vehicle->engine;
-                $itemBuilt->power = $vehicle->power;
-                $itemBuilt->gearbox = $vehicle->gearbox;
-                $itemBuilt->body = $vehicle->body;
-                $itemBuilt->fuel_type = $vehicle->fuel_type;
-                $itemBuilt->mileage = $vehicle->mileage;
-
-                $itemBuilt->drive = $vehicle->drive;
-                $itemBuilt->emission_class = $vehicle->emission_class;
-                $itemBuilt->color = $vehicle->color;
-                $itemBuilt->origin = $vehicle->origin;
-                $itemBuilt->VIN = $vehicle->VIN;
-
-                $itemBuilt->used = $vehicle->used;
-                $itemBuilt->pollution_tax = $vehicle->pollution_tax;
-                $itemBuilt->damaged = $vehicle->damaged;
-                $itemBuilt->registered = $vehicle->registered;
-                $itemBuilt->first_owner = $vehicle->first_owner;
-                $itemBuilt->right_hand_drive = $vehicle->right_hand_drive;
-            }
-            $items->push($itemBuilt);
-        }
-
-        return $items;
-    }
 }

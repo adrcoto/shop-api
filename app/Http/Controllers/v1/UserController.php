@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use App\Services\BaseService;
 
@@ -23,58 +22,6 @@ use App\Services\BaseService;
 class UserController extends Controller
 {
 
-    /**
-     * Login User
-     *
-     * @param Request $request
-     * @param User $userModel
-     * @param JwtToken $jwtToken
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function login(Request $request, User $userModel, JwtToken $jwtToken)
-    {
-        try {
-            $rules = [
-                'email' => 'bail|required|email',
-                'password' => 'required|min:6'
-            ];
-
-            $message = [
-                'email.required' => 'Introduceți o adresă de e-mail',
-                'email.email' => 'Adresa de e-mail trebuie să fie validă',
-                'password.required' => 'Introduceți o parolă',
-                'password.min' => 'Parola trebuie să conțină minim 6 caractere'
-            ];
-
-            $validator = Validator::make($request->all(), $rules, $message);
-
-            if (!$validator->passes()) {
-                return $this->returnError($validator->errors()->first());
-            }
-
-            $user = $userModel->login($request->email, $request->password);
-
-            if (!$user) {
-                return $this->returnNotFound('Email sau parola greșite');
-            }
-
-            if ($user->status !== '1') {
-                return $this->returnError('Contul dumneavoastră incă nu este activat');
-            }
-
-            $token = $jwtToken->createToken($user);
-
-            $data = [
-                'user' => $user,
-                'jwt' => $token->token()
-            ];
-
-            return $this->returnSuccess($data);
-        } catch (\Exception $e) {
-            return $this->returnError($e->getMessage());
-        }
-    }
 
     /**
      * Get logged user
@@ -92,7 +39,6 @@ class UserController extends Controller
         }
     }
 
-
     /**
      * Register user
      * @param Request $request
@@ -107,17 +53,18 @@ class UserController extends Controller
                 'password' => 'required|min:6',
             ];
 
-            $message = [
-                'name.required' => 'Introduceți un nume',
-                'name.max' => 'Numele este prea lung',
-                'email.required' => 'Introduceți o adresă de e-mail',
-                'email.email' => 'Adresa de e-mail trebuie să fie validă',
-                'email.unique' => 'Există deja un utilizator cu această adresă de e-mail',
-                'password.required' => 'Introduceți o parolă',
-                'password.min' => 'Parola trebuie să conțină minim 6 caractere'
+
+            $messages = [
+                'name.required' => 'name',
+                'name.max' => 'name.max',
+                'email.required' => 'email',
+                'email.email' => 'email.email',
+                'email.unique' => 'email.unique',
+                'password.required' => 'password',
+                'password.min' => 'password.min'
             ];
 
-            $validator = Validator::make($request->all(), $rules, $message);
+            $validator = Validator::make($request->all(), $rules, $messages);
 
             if (!$validator->passes()) {
                 return $this->returnError($validator->errors()->first());
@@ -139,6 +86,58 @@ class UserController extends Controller
 
             return $this->returnSuccess();
         } catch (\Exception $e) {
+            return $this->returnError('General error');
+        }
+    }
+
+    /**
+     * Login User
+     * @param Request $request
+     * @param User $userModel
+     * @param JwtToken $jwtToken
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(Request $request, User $userModel, JwtToken $jwtToken)
+    {
+        try {
+            $rules = [
+                'email' => 'bail|required|email',
+                'password' => 'required|min:6'
+            ];
+
+            $messages = [
+                'email.required' => 'email',
+                'email.email' => 'email.email',
+                'email.unique' => 'email.unique',
+                'password.required' => 'password',
+                'password.min' => 'password.min'
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if (!$validator->passes()) {
+                return $this->returnError($validator->errors()->first());
+            }
+
+            $user = $userModel->login($request->email, $request->password);
+
+            if (!$user) {
+                return $this->returnNotFound('user.404');
+            }
+
+            if ($user->status !== '1') {
+                return $this->returnError('user.unactivated');
+            }
+
+            $token = $jwtToken->createToken($user);
+
+            $data = [
+                'user' => $user,
+                'jwt' => $token->token()
+            ];
+
+            return $this->returnSuccess($data);
+        } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
     }
@@ -154,13 +153,13 @@ class UserController extends Controller
                 'email' => 'required|email|exists:users',
             ];
 
-            $message = [
-                'email.required' => 'Introduceți o adresă de e-mail',
-                'email.email' => 'Adresa de e-mail trebuie să fie validă',
-                'email.exists' => 'Nu există nici un utilizator asociat acestei adrese de e-mail',
+            $messages = [
+                'email.required' => 'email',
+                'email.email' => 'email.email',
+                'email.exists' => 'email.exists',
             ];
 
-            $validator = Validator::make($request->all(), $rules, $message);
+            $validator = Validator::make($request->all(), $rules, $messages);
 
             if (!$validator->passes()) {
                 return $this->returnError($validator->errors()->first());
@@ -169,7 +168,7 @@ class UserController extends Controller
             $user = User::where('email', $request->email)->first();
 
             if (!$user)
-                $this->returnNotFound('Nu există nici un utilizator asociat acestei adrese de e-mail');
+                $this->returnNotFound('user.404');
 
             $url = $request->url;
             $emailService = new EmailService();
@@ -180,7 +179,6 @@ class UserController extends Controller
             return $this->returnError($e->getMessage());
         }
     }
-
 
     /**
      * Verify account
@@ -196,16 +194,16 @@ class UserController extends Controller
                 'code' => 'required|min:128|max:128'
             ];
 
-            $message = [
-                'email.required' => 'Introduceți o adresă de e-mail',
-                'email.email' => 'Adresa de e-mail trebuie să fie validă',
-                'email.exists' => 'Nu există nici un utilizator asociat acestei adrese de e-mail',
-                'code.required' => 'Cod inexistent',
-                'code.min' => 'Cod invalid',
-                'code.max' => 'Cod invalid'
+            $messages = [
+                'email.required' => 'email',
+                'email.email' => 'email.email',
+                'email.exists' => 'email.exists',
+                'code.required' => 'code',
+                'code.min' => 'code.min',
+                'code.max' => 'code.max'
             ];
 
-            $validator = Validator::make($request->all(), $rules, $message);
+            $validator = Validator::make($request->all(), $rules, $messages);
 
             if (!$validator->passes())
                 return $this->returnError($validator->errors()->first());
@@ -214,10 +212,13 @@ class UserController extends Controller
             $user = $userModel::where('email', $request->email)->get()->first();
 
             if (!$user)
-                return $this->returnNotFound('Nu există nici un utilizator asociat acestei adrese de e-mail');
+                return $this->returnNotFound('user.404');
+
+            if ($user->status == User::STATUS_ACTIVE)
+                return $this->returnError('user.activated');
 
             if ($user->status != $request->code)
-                return $this->returnError('Codul este invalid');
+                return $this->returnError('code.min');
 
             $user->status = '1';
 
@@ -229,7 +230,6 @@ class UserController extends Controller
             return $this->returnError($e->getMessage());
         }
     }
-
 
     /**
      * Forgot password
@@ -245,9 +245,9 @@ class UserController extends Controller
             ];
 
             $messages = [
-                'email.required' => 'Introduceți o adresă de e-mail',
-                'email.email' => 'Adresa de e-mail trebuie să fie validă',
-                'email.exists' => 'Nu există nici un cont asociat adresei de e-mail introdusă',
+                'email.required' => 'email',
+                'email.email' => 'email.email',
+                'email.exists' => 'email.exists',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -267,12 +267,11 @@ class UserController extends Controller
             else
                 $emailService->sendForgotPassword($user);
 
-            return $this->returnSuccess($request->all());
+            return $this->returnSuccess();
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }
     }
-
 
     /**
      * Change user password
@@ -289,12 +288,14 @@ class UserController extends Controller
                 'password' => 'bail|required|min:6',
             ];
 
+
             $messages = [
-                'email.required' => 'Introduceți o adresă de e-mail',
-                'email.email' => 'Adresa de e-mail trebuie să fie validă',
-                'code.required' => 'Introduceți codul trimis pe e-mail',
-                'password.required' => 'Introduceți o nouă parolă',
-                'password.min' => 'Parola trebuie să conțină minim 6 caractere'
+                'email.required' => 'email',
+                'email.email' => 'email.email',
+                'email.exists' => 'email.exists',
+                'code.required' => 'code',
+                'password.required' => 'password',
+                'password.min' => 'password.min',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -303,10 +304,14 @@ class UserController extends Controller
                 return $this->returnError($validator->errors()->first());
             }
 
-            $user = $userModel::where('email', $request->email)->where('forgot_code', $request->code)->get()->first();
+            $user = $userModel::where('email', $request->email)->first();
 
             if (!$user) {
-                return $this->returnNotFound('Codul nu este valid');
+                return $this->returnNotFound('user.404');
+            }
+
+            if ($user->forgot_code != $request->code) {
+                return $this->returnError('code.min');
             }
 
             $user->password = Hash::make($request->password);
@@ -319,7 +324,6 @@ class UserController extends Controller
             return $this->returnError($e->getMessage());
         }
     }
-
 
     /**
      * Update logged user
@@ -334,18 +338,18 @@ class UserController extends Controller
                 'password' => 'bail|min:6',
                 'phone' => 'min:6',
             ];
-            $message = [
-                'name.max' => 'Numele este prea lung',
-                'password' => 'Parola trebuie să conțină minim 6 caracter',
-                'phone.min' => 'Introduceți un număr de telefon valid'
+
+            $messages = [
+                'name.max' => 'name.max',
+                'password.min' => 'password.min',
+                'phone.min' => 'phone.min'
             ];
 
-            $validator = Validator::make($request->all(), $rules, $message);
+            $validator = Validator::make($request->all(), $rules, $messages);
 
             if (!$validator->passes()) {
                 return $this->returnError($validator->errors()->first());
             }
-
 
             $user = $this->validateSession();
 
@@ -369,17 +373,22 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Update user picture
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function updateAvatar(Request $request)
     {
-
         try {
 
             $rules = [
                 'avatar' => 'required|image',
             ];
+
             $messages = [
-                'avatar.required' => 'Alegeți o fotografie',
-                'avatar.image' => 'Fotografia nu este suportată'
+              'avatar.required' => 'avatar',
+              'avatar.image' => 'avatar.image',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
