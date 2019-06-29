@@ -1072,6 +1072,8 @@ Pret absolut fix !",
     }
 
 
+
+
     private function addItem($title, $description, $price, $currency, $negotiable, $change, $category, $sub_category, $type, $city, $district, $images)
     {
         $item = new Item();

@@ -1,17 +1,11 @@
 <?php
 
-
 namespace App\Http\Controllers\v1;
 
-use App\Category;
-use App\Electronic;
 use App\Favorite;
-
 use App\Http\Controllers\Controller;
 use App\Util;
-use App\Vehicle;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -20,6 +14,20 @@ use Illuminate\Support\Facades\DB;
  */
 class FavoriteController extends Controller
 {
+
+
+    public function getAll()
+    {
+        try {
+            $user = $this->validateSession();
+
+            $requestedItems = Favorite::where('user', $user->id)->get();
+
+            return $this->returnSuccess($requestedItems);
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
+    }
 
     public function get(Request $request)
     {
@@ -44,7 +52,7 @@ class FavoriteController extends Controller
         try {
             $user = $this->validateSession();
 
-            $alreadyFavorite = Favorite::where('item', $request->item)->first();
+            $alreadyFavorite = Favorite::where('item', $request->item)->where('user', $user->id)->first();
 
             if ($alreadyFavorite)
                 return $this->returnError('Anunțul este deja in lista de anuțuri favorite');
@@ -68,10 +76,10 @@ class FavoriteController extends Controller
             $favorite = Favorite::where('item', $id)->where('user', $user->id)->first();
 
             if (!$favorite)
-                return $this->returnNotFound('Item not found');
+                return $this->returnNotFound('Anunțul nu a putut fi găsit');
 
             if ($user->id != $favorite->user)
-                return $this->returnError('You don\'t have permission to remove this item from favorites');
+                return $this->returnError('Nu aveți permisiunea pentru a șterge acest anunț');
 
             $favorite->delete();
 

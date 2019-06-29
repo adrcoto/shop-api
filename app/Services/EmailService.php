@@ -30,7 +30,9 @@ class EmailService
     /**
      * Send code on email for change password
      * @param User $user
+     * @return boolean
      */
+
     public function sendChangePassword(User $user)
     {
         Mail::send('emails.change', ['user' => $user], function ($message) use ($user) {
@@ -45,6 +47,7 @@ class EmailService
      * Send  email for verifying accunt
      * @param User $user
      * @param string $url
+     * @return boolean
      */
     public function sendVerifyAccount(User $user, string $url)
     {
@@ -54,6 +57,8 @@ class EmailService
 
             $message->to($user->email);
         });
+
+        return (count(Mail::failures()) == 0);
     }
 
 

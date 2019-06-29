@@ -131,7 +131,45 @@ class UserController extends Controller
             $user->status = str_random(128);
             $user->role_id = Role::ROLE_USER;
 
-            $user->save();
+            $url = $request->url;
+            $emailService = new EmailService();
+
+            if ($emailService->sendVerifyAccount($user, $url))
+                $user->save();
+
+            return $this->returnSuccess();
+        } catch (\Exception $e) {
+            return $this->returnError($e->getMessage());
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendVerificationEmail(Request $request)
+    {
+        try {
+            $rules = [
+                'email' => 'required|email|exists:users',
+            ];
+
+            $message = [
+                'email.required' => 'Introduceți o adresă de e-mail',
+                'email.email' => 'Adresa de e-mail trebuie să fie validă',
+                'email.exists' => 'Nu există nici un utilizator asociat acestei adrese de e-mail',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $message);
+
+            if (!$validator->passes()) {
+                return $this->returnError($validator->errors()->first());
+            }
+
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user)
+                $this->returnNotFound('Nu există nici un utilizator asociat acestei adrese de e-mail');
 
             $url = $request->url;
             $emailService = new EmailService();
@@ -154,11 +192,14 @@ class UserController extends Controller
     {
         try {
             $rules = [
-//                'email' => 'required|email|exists:users',
+                'email' => 'required|email|exists:users',
                 'code' => 'required|min:128|max:128'
             ];
 
             $message = [
+                'email.required' => 'Introduceți o adresă de e-mail',
+                'email.email' => 'Adresa de e-mail trebuie să fie validă',
+                'email.exists' => 'Nu există nici un utilizator asociat acestei adrese de e-mail',
                 'code.required' => 'Cod inexistent',
                 'code.min' => 'Cod invalid',
                 'code.max' => 'Cod invalid'
@@ -170,14 +211,13 @@ class UserController extends Controller
                 return $this->returnError($validator->errors()->first());
 
 
-//            $user = $userModel::where('email', $request->email)->get()->first();
-            $user = $userModel::where('status', $request->code)->get()->first();
+            $user = $userModel::where('email', $request->email)->get()->first();
 
             if (!$user)
-                return $this->returnNotFound('Contul este deja activat');
+                return $this->returnNotFound('Nu există nici un utilizator asociat acestei adrese de e-mail');
 
-//            if ($user->status != $request->code)
-//                return $this->returnError('Invalid code');
+            if ($user->status != $request->code)
+                return $this->returnError('Codul este invalid');
 
             $user->status = '1';
 
@@ -323,7 +363,7 @@ class UserController extends Controller
 
 
             $user->save();
-            return $this->returnSuccess($request->all());
+            return $this->returnSuccess();
         } catch (\Exception $e) {
             return $this->returnError($e->getMessage());
         }

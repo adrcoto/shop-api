@@ -34,6 +34,7 @@ $router->options(
 $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware' => 'cors'], function () use ($router) {
     $router->post('/login', ['uses' => 'UserController@login']);
     $router->post('/register', ['uses' => 'UserController@register']);
+    $router->post('/resend-verification', ['uses' => 'UserController@sendVerificationEmail']);
     $router->post('/verify', ['uses' => 'UserController@verify']);
     $router->post('/forgot-password', ['uses' => 'UserController@forgotPassword']);
     $router->post('/change-password', ['uses' => 'UserController@changePassword']);
@@ -74,6 +75,7 @@ $router->group(['namespace' => API_VERSION, 'prefix' => API_VERSION, 'middleware
     });
 
     $router->group(['prefix' => 'favorites'], function () use ($router) {
+        $router->get('/all', ['uses' => 'FavoriteController@getAll']);
         $router->get('/', ['uses' => 'FavoriteController@get']);
         $router->post('/', ['uses' => 'FavoriteController@add']);
         $router->delete('/{id}', ['uses' => 'FavoriteController@remove']);
