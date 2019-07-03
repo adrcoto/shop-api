@@ -1,0 +1,1 @@
+mklink /d path/where/should/be/public       /path/where/is/private
